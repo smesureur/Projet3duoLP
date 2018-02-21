@@ -1,0 +1,10 @@
+#! /usr/bin/make -f
+
+#export DH_VERBOSE = 1
+
+%:
+	dh --buildsystem=qmake $@
+
+override_dh_auto_install:
+	install -g root -o root -m 755 -d       $(CURDIR)/debian/cutycapt/usr/bin
+	install -g root -o root -m 755 CutyCapt $(CURDIR)/debian/cutycapt/usr/bin/cutycapt

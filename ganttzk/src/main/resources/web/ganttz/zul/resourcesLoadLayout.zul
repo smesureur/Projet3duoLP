@@ -1,0 +1,96 @@
+<!--
+  This file is part of LibrePlan
+
+  Copyright (C) 2009-2010 Fundación para o Fomento da Calidade Industrial e
+                          Desenvolvemento Tecnolóxico de Galicia
+  Copyright (C) 2010-2011 Igalia, S.L.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<?xel-method prefix="ganttzk_i18n" name="_" class="org.zkoss.ganttz.i18n.I18nHelper"
+    signature="java.lang.String _(java.lang.String name)" ?>
+
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native" height="100%">
+<zscript><![CDATA[
+resourcesLoadPanel = self;
+]]>
+</zscript>
+
+    <borderlayout sclass="resourcesloadlayout" width="auto" height="100%">
+       <north height="30px" border="0" sclass="toolbar-box">
+       <hbox align="center" id="toolbar" >
+        <separator height="30px"/>
+        <label>${ganttzk_i18n:_('Zoom')}:</label>
+        <listbox id="listZoomLevels" mold="select" rows="1"
+            model="${resourcesLoadPanel.zoomLevels}"
+            onSelect="resourcesLoadPanel.setZoomLevel(self.selectedItem.value);" >
+        </listbox>
+        <separator/>
+        <hbox id="additionalFilterInsertionPoint1" />
+        <separator/>
+        <label id="filterByNameLabel">${ganttzk_i18n:_('Page')}:</label>
+        <combobox id="filterByNameCombo" width="50px"
+            onChange="resourcesLoadPanel.onSelectFilterByName(self)" />
+        <separator/>
+        ${ganttzk_i18n:_('Group by')}:
+        <listbox id="listFilters" mold="select" rows="1" width="150px"
+            model="${resourcesLoadPanel.filters}"
+            selectedIndex="0"
+            onSelect="resourcesLoadPanel.setFilter(self.selectedItem.value);">
+        </listbox>
+        <separator/>
+        <hbox id="additionalFilterInsertionPoint2" />
+       </hbox>
+       </north>
+
+        <center border="0">
+            <borderlayout sclass="resourcesload">
+                <west size="250px" flex="true" collapsible="true"
+                    splittable="true" autoscroll="false" border="0">
+                    <borderlayout>
+                        <north border="0" height="35px" flex="true" collapsible="true">
+                            <vbox pack="top" align="center">
+                            <tree fixedLayout="true" hflex="true" sclass="resourceloaddetailsContainer">
+                                <treecols>
+                                    <treecol label="${ganttzk_i18n:_('Name')}" height="29px"/>
+                                </treecols>
+                            </tree>
+
+                            </vbox>
+                        </north>
+                        <center border="0" style="overflow-x:scroll">
+                            <div sclass="leftpanelgap" id="insertionPointLeftPanel"></div>
+                        </center>
+                    </borderlayout>
+                </west>
+
+                <center sclass="taskspanel">
+                    <borderlayout>
+                        <north border="0"><div sclass="timetrackergap" height="30px" id="insertionPointTimetracker"></div></north>
+                        <center autoscroll="true" border="0" sclass="rightpanellayout">
+                            <div id="insertionPointRightPanel" sclass="taskspanelgap"></div>
+                        </center>
+                    </borderlayout>
+
+                </center>
+            </borderlayout>
+        </center>
+        <south height="200px" collapsible="true" title="${ganttzk_i18n:_('Graphics')}"
+            sclass="scheduling-graphics" id="graphics"
+            onOpen="resourcesLoadPanel.changeChartVisibility(event.open);">
+            <div id="insertionPointChart" />
+        </south>
+    </borderlayout>
+</zk>

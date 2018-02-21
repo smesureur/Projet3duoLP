@@ -1,0 +1,105 @@
+<!--
+    This file is part of LibrePlan
+
+    Copyright (C) 2010-2012 Igalia, S.L.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- Configure the parameters for the 'global progress' chart. The object contains a method 'render' that
+    is called from the Java file once all objects in the view have been created -->
+<script type="text/javascript" defer="true">
+<![CDATA[
+
+    global_progress = {
+        id: 'global-progress',
+        data: [],
+        title: 'Project progress percentage',
+        seriesDefaults: {
+            renderer:$.jqplot.BarRenderer,
+            pointLabels: { show: true, location: 'e', edgeTolerance: -15 },
+            shadowAngle: 135,
+            rendererOptions: {
+                barDirection: 'horizontal'
+            },
+        },
+        axes: {
+            xaxis: {
+                label: "Progress percentage per progress type"
+            },
+            yaxis: {
+                renderer: $.jqplot.CategoryAxisRenderer,
+                ticks: ['1','2','3','4'],
+                tickOptions: {
+                    showGridline: false,
+                    markSize: 0
+                }
+            }
+        },
+        series:[
+            {label:'Expected', color: 'blue'},
+            {label:'Actual', color: 'red'},
+        ],
+        legend: {
+            show: true,
+            location: 'e',
+            placement: 'outside',
+        },
+        render: function(data, params) {
+            params = jQuery.parseJSON(params);
+            if (params['title'] !== undefined) {
+                this.title = params['title'];
+            }
+            if (params['label'] !== undefined) {
+                this.axes.xaxis.label = params['label'];
+            }
+            if (params['ticks'] !== undefined) {
+                this.axes.yaxis.ticks = params['ticks'];
+            }
+            if (params['series'] !== undefined) {
+                this.series = params['series'];
+            }
+            data = jQuery.parseJSON(data);
+            this.plot = $.jqplot(this.id, data, this);
+            this.attachTooltip();
+        },
+        attachTooltip: function() {
+            var node = $('#' + this.id);
+            node.bind('jqplotDataHighlight',
+                function (ev, seriesIndex, pointIndex, data) {
+                    var x = ev.pageX - node.offset().left;
+                    var y = ev.pageY - node.offset().top;
+
+                    var tooltip = $('<span class="tooltip"></span>');
+
+                    tooltip.text(data[0]).appendTo(node);
+                    tooltip.css({'top': y, 'left': x, 'position': 'absolute'});
+                    tooltip.fadeIn('slow');
+                }
+            );
+            node.bind('jqplotDataUnhighlight',
+                function (ev) {
+                    $('.tooltip').remove();
+                }
+            );
+            node.mousemove(function(ev) {
+                var x = ev.pageX - node.offset().left;
+                var y = ev.pageY - node.offset().top;
+                $('.tooltip').css({'top': y, 'left': x, 'position': 'absolute'})
+            });
+        }
+    };
+
+]]>
+</script>

@@ -1,0 +1,161 @@
+/*
+ * This file is part of LibrePlan
+ *
+ * Copyright (C) 2011 Igalia, S.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* Included tests
+ *
+ * 1 - Create a new Calendar
+ * 2 - Create a Calendar with duplicate type (it should be a failure)
+ * 3 - Create a Calendar with empty type (it should be a failure)
+ * 4 - Create a derived calendar
+ * 5 - Edit the Calendar
+ * 6 - Assign the child calendar to a worker
+ *   6.1 - Create a worker with the assigned calendar
+ *   6.2 - Try to delete the assigned calendar (it should be a failure)
+ *   6.3 - Delete the worker
+ * 7 - Assign the child calendar to a project
+ *   7.1 - Create a project with the assigned calendar
+ *   7.2 - Try to delete the assigned calendar (it should be a failure)
+ *   7.3 - Delete the project
+ * 8 - Try to delete the parent calendar (it should be a failure)
+ * 9 - Delete the child calendar
+ * 10 - Delete the parent Calendar
+ *
+*/
+
+_include("../common_functions.sah");
+
+function calendarCreateDuplicateType($name) {
+    commonCreate("Calendars");
+    commonCalendarForm($name);
+    calendarNotValid($name);
+    _log("Do not allow create a calendar with duplicate name", "custom1");
+}
+
+function calendarCreateEmpty() {
+    commonCreate("Calendars");
+    commonCalendarForm("");
+    calendarNotEmptyNameValidation();
+    _log("Do not allow create a calendar without name", "custom1");
+}
+
+function calendarCreateChild($parentName, $sonName, $cell) {
+    calendarGoToCreateChildForm($parentName, $cell);
+    commonCalendarForm($sonName);
+    commonSaveValidation("Base calendar", $sonName);
+    _log("Create a son calendar", "custom1");
+}
+
+function calendarEdit($oldName, $newName, $cell) {
+    commonEdit($oldName, $cell);
+    commonCalendarForm($newName);
+    commonSaveValidation("Base calendar", $newName);
+    _log("Edit the parent calendar", "custom1");
+}
+
+function calendarGoToCreateChildForm($name, $cell) {
+    _click(_link("Calendars"));
+    _click(_image("ico_derived1.png", _in(_cell($cell, _near(_cell($name))))));
+}
+
+function calendarTryDeleteParentWithSon($name, $cell) {
+    _click(_link("Calendars"));
+    _click(_image("ico_borrar1.png", _in(_cell($cell, _near(_cell($name))))));
+    calendarNotAllowDeleteWithChildValidation();
+    _log("Do not allow delete the parent calendar", "custom1");
+}
+
+function calendarCheckCode($name){
+    commonConfigurationChangeCheckboxMainPreferences("Calendar");
+    calendarCreateWithoutCode($name);
+    commonConfigurationChangeCheckboxMainPreferences("Calendar");
+    _log("Check code label", "custom1");
+}
+
+function calendarCreateWithoutCode($name){
+    commonCreate("Calendars");
+    calendarForm($name);
+    commonEmptyCodeValidation();
+}
+
+function calendarAssignWorker($name, $id, $calendar) {
+    commonWorkerCreate($name, $name, $id);
+    commonResourceEditAssignedCalendarForm("Workers", $name, 5, $calendar);
+    commonCalendarTryDeleteAssignedCalendar($calendar, 3);
+    commonWorkerDelete($name);
+    _log("Assign a calendar to a Worker", "custom1");
+}
+
+function calendarAssignProject($projectName, $calendar){
+    commonCreateProject($projectName, $calendar);
+    calendarTryDeleteAssignedToProjectCalendar($calendar, 3);
+    commonDeleteProject($projectName);
+    _log("Assign Calendar to a project", "custom1");
+}
+
+/*
+ * Validations
+ */
+
+function calendarNotEmptyNameValidation(){
+    _assertExists(_div("cannot be empty"));
+    _assert(_isVisible(_div("cannot be empty")));
+}
+
+function calendarNotValid($calendar){
+    _assertExists(_div($calendar+" already exists"));
+    _assert(_isVisible(_div($calendar+" already exists")));
+}
+
+function calendarNotAllowDeleteWithChildValidation(){
+    _assertExists(_span("Calendar cannot be removed as it has other derived calendars from it"));
+    _assert(_isVisible(_span("Calendar cannot be removed as it has other derived calendars from it")));
+}
+
+function calendarTryDeleteAssignedToProjectCalendar($name, $cell) {
+    _click(_link("Calendars"));
+    _click(_image("ico_borrar1.png", _in(_cell($cell, _near(_cell($name))))));
+    _assertExists(_span("Cannot delete calendar. It is being used at this moment by some orders."));
+    _assert(_isVisible(_span("Cannot delete calendar. It is being used at this moment by some orders.")));
+    _log("Do not allow delete assigned calendar", "custom1");
+}
+
+/* test values */
+var $calendarName = "parent";
+var $calendarSonName = "Son calendar";
+var $calendarNewName = "newest";
+var $workerId = "36123456P";
+var $workerName = "worker1";
+var $projectName = "projectForCalendar";
+
+/* test actions */
+commonLogin("admin", "admin");
+
+commonCalendarCreate($calendarName);
+calendarCreateDuplicateType($calendarName);
+calendarCreateEmpty();
+calendarCreateChild($calendarName, $calendarSonName, 3);
+calendarEdit($calendarName, $calendarNewName, 3);
+calendarAssignWorker($workerName, $workerId, $calendarSonName);
+calendarAssignProject($projectName, $calendarSonName);
+calendarTryDeleteParentWithSon($calendarNewName, 3);
+/* calendarCheckCode($calendarName); PENDING OF A BUG */
+commonCalendarDelete($calendarSonName);
+commonCalendarDelete($calendarNewName);
+
+commonLogout();

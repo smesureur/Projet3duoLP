@@ -1,0 +1,125 @@
+<!--
+  This file is part of LibrePlan
+
+  Copyright (C) 2009-2010 Fundación para o Fomento da Calidade Industrial e
+                          Desenvolvemento Tecnolóxico de Galicia
+  Copyright (C) 2010-2012 Igalia, S.L.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+<?component name="button" extends="button" mold="trendy"?>
+<?xel-method prefix="ganttzk_i18n" name="_" class="org.zkoss.ganttz.i18n.I18nHelper"
+    signature="java.lang.String _(java.lang.String name)" ?>
+<zscript><![CDATA[
+planner = self;
+]]>
+</zscript>
+    <borderlayout sclass="plannerlayout" width="auto">
+       <north height="30px" border="0" sclass="toolbar-box">
+       <hbox align="center" id="toolbar">
+
+        <separator/>
+        <!--  Commands -->
+
+        <button onClick="planner.invalidate()"
+            image="/common/img/ico_refresh.png"
+            tooltiptext="${ganttzk_i18n:_('Refresh')}" visible="false" />
+
+        <hbox id="plannerButtonsInsertionPoint" />
+
+        <button id="btnPrint" onClick="planner.print()"
+            image="/common/img/ico_print.png"
+            tooltiptext="${ganttzk_i18n:_('Print')}" />
+        <separator/>
+
+        <!--  Visualization modes -->
+        <space bar="true" />
+        <label>${ganttzk_i18n:_('Zoom')}:</label>
+        <listbox id="listZoomLevels" mold="select" rows="1"
+            model="${planner.zoomLevels}">
+        </listbox>
+
+        <!-- Progress type -->
+
+        <button id="showCriticalPath" onClick="planner.showCriticalPath();"
+            image="/common/img/ico_criticalpath.png"
+            tooltiptext="${ganttzk_i18n:_('Show/Hide critical path')}" />
+        <button id="showAllLabels" onClick="planner.showAllLabels();"
+            image="/common/img/ico_labels.png"
+            tooltiptext="${ganttzk_i18n:_('Show/Hide labels')}" sclass="planner-command show-labels" />
+        <button id="showAllResources" onClick="planner.showAllResources();"
+            image="/common/img/ico_resources.png"
+            tooltiptext="${ganttzk_i18n:_('Show/Hide resources')}" sclass="planner-command show-resources" />
+        <button id="expandAll" onClick="planner.expandAll();"
+            image="/common/img/ico_expand.png"
+            tooltiptext="${ganttzk_i18n:_('Expand/Collapse all')}"
+            sclass="planner-command" />
+        <button id="flattenTree" onClick="planner.flattenTree();"
+            image="/common/img/ico_flatten.png"
+            tooltiptext="${ganttzk_i18n:_('Flatten/Unflatten tree')}"
+            sclass="planner-command" />
+
+        <hbox class="show-advances" align="center">
+            <button id="showAdvances" onClick="planner.showAdvances();"
+                image="/common/img/ico_progress.png"
+                style="width:46px"
+                tooltiptext="${ganttzk_i18n:_('Show/Hide progress')}"
+                sclass="planner-command" />
+            <combobox id="cbProgressTypes" width="1px" visible="false" sclass="progress-types"/>
+        </hbox>
+
+        <button id="showReportedHours" onClick="planner.showReportedHours();"
+            image="/common/img/ico_costs.png"
+            tooltiptext="${ganttzk_i18n:_('Show/Hide reported hours')}"
+            sclass="planner-command"/>
+        <separator />
+
+        <button id="showMoneyCostBar" onClick="planner.showMoneyCostBar();"
+            image="/common/img/ico_money_cost_bar.png"
+            tooltiptext="${ganttzk_i18n:_('Show/Hide money cost bar')}"
+            sclass="planner-command"/>
+        <separator />
+
+        <!--  Filtering -->
+        <vbox id="orderFilter"/>
+        <vbox id="orderElementFilter"/>
+        <separator />
+
+       </hbox>
+       </north>
+
+        <center border="0">
+            <borderlayout sclass="plannerlayout_center" height="100%">
+                <west flex="false" collapsible="true" splittable="true" width="300px"
+                    id="taskdetailsContainer" sclass="taskdetailsContainer">
+                            <div sclass="leftpanelgap" id="insertionPointLeftPanel"></div>
+                </west>
+                <center sclass="taskspanel">
+                    <borderlayout>
+                        <north border="0"><div sclass="timetrackergap" id="insertionPointTimetracker"></div></north>
+                        <center autoscroll="true" border="0" sclass="rightpanellayout">
+                            <div id="insertionPointRightPanel" sclass="taskspanelgap"></div>
+                        </center>
+                    </borderlayout>
+
+                </center>
+            </borderlayout>
+        </center>
+        <south collapsible="true" title="${ganttzk_i18n:_('Graphics')}" sclass="scheduling-graphics"
+            id="graphics" onOpen="planner.changeChartVisibility(event.open);" height="200px">
+            <div id="insertionPointChart" />
+        </south>
+    </borderlayout>
+</zk>

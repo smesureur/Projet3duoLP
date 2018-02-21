@@ -1,0 +1,160 @@
+/*
+ * This file is part of LibrePlan
+ *
+ * Copyright (C) 2011-2012 Igalia, S.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* Included tests
+ *
+ * 1 - Create a new Label
+ * 2 - Create a Label with duplicate type (it should be a failure)
+ * 3 - Create a Label with empty type (it should be a failure)
+ * 4 - Create a Label with duplicate name (it should be a failure)
+ * 5 - Edit a Label
+ * 6 - Assign a Label
+ *   6.1 - Create a project
+ *   6.2 - Add a Label to a project
+ *   6.3 - Try to delete this assigned Label (it should be a failure)
+ *   6.4 - Delete the project
+ * 7 - Check code
+ *   7.1 - Change configuration
+ *   7.2 - Try to create a new Label type without Code (it should be a failure)
+ *   7.3 - Try to create a new Label name without Code (it should be a failure)
+ *   7.4 - Change configuration like before
+ * 8 - Delete Label
+ *
+*/
+_include("../common_functions.sah");
+
+function labelCreateDuplicateType($type){
+    commonCreate("Labels");
+    commonLabelForm($type);
+    labelNotValid($type);
+    _log("Do not allow create a label with duplicate type", "custom1");
+}
+
+function labelCreateEmpty(){
+    commonCreate("Labels");
+    commonLabelForm("");
+    _assertExists(_div("cannot be empty"));
+    _assert(_isVisible(_div("cannot be empty")));
+    _log("Do not allow create a label without type", "custom1");
+}
+
+function labelCreateDuplicateName($type, $name){
+    commonCreate("Labels");
+    _setValue(_textbox(0, _near(_span("Name"))), $type);
+    _setValue(_textbox(0, _near(_span("New label"))), $name);
+    _click(_cell("Add"));
+    _setValue(_textbox(0, _near(_span("New label"))), $name);
+    _click(_cell("Add"));
+    _assertExists(_span("Already exists other label with the same name"));
+    _assert(_isVisible(_span("Already exists other label with the same name")));
+    _log("Do not allow create a label with duplicate name", "custom1");
+}
+
+/* test to check a that LibrePlan give us a error */
+function labelNotValid($labelType){
+    _assertExists(_div($labelType+" already exists"));
+    _assert(_isVisible(_div($labelType+" already exists")));
+}
+
+function labelEdit($oldName, $newName, $cell){
+    commonEdit($oldName, $cell);
+    commonLabelForm($newName);
+    commonSaveValidation("Label Type", $newName);
+    _log("Edit the label", "custom1");
+}
+
+function labelAssig($project, $labelName, $labelType2){
+    commonCreateProject($project);
+    labelAssignProject($project);
+    labeltryDelete($labelType2);
+    commonDeleteProject($project);
+    _log("Assign the label", "custom1");
+}
+
+function labelAssignProject($project){
+    _click(_link("Projects"));
+    _click(_image("ico_editar1.png", _in(_cell(8, _near(_cell($project))))));
+    _click(_span("Label"));
+    _click(_textbox(0, _near(_cell("Assign"))));
+    _click(_div("criteria1"));
+    _click(_cell("Assign"));
+    _click(_image("ico_save.png"));
+    _click(_cell("OK"));
+}
+function labeltryDelete($labelNewType){
+    _click(_link("Labels"));
+    _click(_image("ico_borrar_out.png", _in(_cell(2, _near(_cell($labelNewType))))));
+    _assertNotExists(_cell("OK"));
+    _assertNull(_cell("OK"));
+    _assertNotEqual("Delete Progress Type \""+$labelNewType+"\". Are you sure?");
+    _assertNull(_cell("Delete Progress Type \""+$labelNewType+"\". Are you sure?"));
+    _assertExists(_cell($labelNewType));
+    _assert(_isVisible(_cell($labelNewType)));
+}
+
+function labelCheckCode($labelType, $labelName){
+    commonConfigurationChangeCheckboxMainPreferences("Labels");
+    labelCreateWithoutCode($labelType, $labelName);
+    commonConfigurationChangeCheckboxMainPreferences("Labels");
+    _log("Check code label", "custom1");
+}
+
+function labelCreateWithoutCode($type, $labelName){
+    commonCreate("Labels");
+    labelFormEmptyCode($type, $labelName);
+    commonEmptyCodeValidation();
+}
+
+function labelFormEmptyCode($name, $labelName){
+    _setValue(_textbox(0, _near(_span("Name"))), $name);
+    _click(_cell("Save"));
+    labelEmptyCodeValidation();
+    _setValue(_textbox(0, _near(_span("Code"))), "RamdonCode1234");
+    _removeFocus(_textbox(0, _near(_span("Code"))));
+    _setValue(_textbox(0, _near(_span("New label"))), $labelName);
+    _click(_cell("Add"));
+    _click(_cell("Save"));
+}
+
+function labelEmptyCodeValidation(){
+    _assertExists(_div("code not specified"));
+    _assert(_isVisible(_div("code not specified")));
+}
+
+/* test values */
+var $labelType = "new";
+var $labelType2 = "new2";
+var $labelNewType = "newest";
+var $labelName = ["criteria1"];
+var $projectName = "project1";
+
+/* test actions */
+commonLogin("admin", "admin");
+
+commonLabelCreate($labelType, $labelName);
+labelCreateDuplicateType($labelType);
+labelCreateEmpty();
+labelCreateDuplicateName($labelType2, $labelName);
+
+labelEdit($labelType, $labelNewType, 2);
+labelAssig($projectName, $labelName, $labelNewType);
+labelCheckCode($labelType, $labelName);
+commonLabelDelete($labelNewType);
+
+commonLogout();

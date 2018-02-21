@@ -1,0 +1,55 @@
+<!--
+  This file is part of LibrePlan
+
+  Copyright (C) 2009-2010 Fundación para o Fomento da Calidade Industrial e
+                          Desenvolvemento Tecnolóxico de Galicia
+  Copyright (C) 2010-2012 Igalia, S.L.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<?page title="${i18n:_('LibrePlan: Page not found')}" ?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="/common/layout/template.zul"?>
+<?link rel="stylesheet" type="text/css" href="/common/css/libreplan.css"?>
+<?link rel="stylesheet" type="text/css" href="/common/css/libreplan_zk.css"?>
+
+<zk xmlns:n="http://www.zkoss.org/2005/zk/native">
+
+    <zscript>
+    <![CDATA[
+        contextPath = Executions.getCurrent().getContextPath();
+    ]]>
+    </zscript>
+
+    <window self="@{define(content)}" >
+
+        <vbox apply="org.libreplan.web.error.PageForErrorOnEvent"
+            sclass="errorbox">
+
+            <label value="${i18n:_('The page that you are requesting does not exist.')}" />
+
+            <hbox>
+                <label value="${i18n:_('If you entered the URL directly in the navigation bar of the browser, please review it or click in the following link in order to go to initial page: ')}" />
+                <n:a href="${contextPath}/">
+                    <label value="${i18n:_('Go to init')}" />
+                </n:a>
+            </hbox>
+
+            <label value="${i18n:_('If you reached this page from another page of LibrePlan please notify us in order to fix it as soon as possible.')}" />
+
+            <label value="${i18n:_('Sorry for the inconvenience.')}" />
+
+        </vbox>
+    </window>
+</zk>

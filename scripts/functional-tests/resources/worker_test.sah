@@ -1,0 +1,201 @@
+/*
+ * This file is part of LibrePlan
+ *
+ * Copyright (C) 2011 Igalia, S.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* Included tests
+ *
+ * 1 - Create a new Worker
+ * 2 - Create a Worker with duplicate type (it should be a failure)
+ * 3 - Create a Worker with empty type (it should be a failure)
+ * 4 - Create a Worker with duplicate name (it should be a failure)
+ * 5 - Edit a Worker
+ * 6 - Check other tabs
+ *   6.1 - Check assigned criteria tab
+ *     6.1.1 - Create a criterion
+ *     6.1.2 - Assign this criterion to the worker
+ *     6.1.3 - Try to delete the criterion
+ *   6.2 - Check assigned calendar tab
+ *     6.2.1 - Create a calendar
+ *     6.2.2 - Assign this calendar to the worker
+ *     6.2.3 - Try to delete the calendar
+ *   6.3 - Check assigned cost category tab
+ *     6.3.1 - Create a work hour
+ *     6.3.2 - Create a cost category
+ *     6.3.3 - Assign this cost category to the worker
+ *     6.3.4 - Try to delete the cost category
+ * 7 - Try create a Worker without Code
+ *   7.1 - Change configuration
+ *   7.2 - create a Worker without Code (it should be a failure)
+ * 8 - Assign the Worker in a project
+ *   8.1 - Create a project
+ *   8.2 - Create a task
+ *   8.3 - Assign the Worker in limiting resource form
+ *   8.4 - Try to delete the asigned Worker
+ *   8.5 - Delete the Project
+ * 9 - Delete Worker
+ * 10 - Delete all required elements
+ *
+*/
+
+_include("../common_functions.sah");
+
+function workerCreateDuplicateType($name, $surName, $id) {
+    commonCreate("Workers");
+    commonWorkerForm($name, $surName, $id);
+    workerNotValid($name);
+    _log("Create a duplicate worker", "custom1");
+}
+
+function workerCreateEmpty($name, $surName, $id) {
+    commonCreate("Workers");
+    workerEmptyForm($name, $surName, $id);
+    _log("Create a empty worker", "custom1");
+}
+
+function workerEmptyForm($name, $surName, $id) {
+    _click(_cell("Save"));
+    workerEmptyFields();
+    _setValue(_textbox(0, _near(_span("First name"))), $name);
+    _click(_cell("Save"));
+    workerEmptyFields();
+    _setValue(_textbox(0, _near(_span("Last name"))), $surName);
+    _click(_cell("Save"));
+    workerEmptyFields();
+}
+
+function workerEdit($oldName, $newName, $cell) {
+    commonEdit($oldName, $cell);
+    commonWorkerForm($newName);
+    commonWorkerAcctionValidation("saved");
+    _log("Edit a worker", "custom1");
+}
+
+function workerCheckCode($name, $surName, $ID){
+    commonConfigurationChangeCheckboxMainPreferences("Resources");
+    workerCreateWithoutCode($name, $surName, $ID);
+    commonConfigurationChangeCheckboxMainPreferences("Resources");
+    _log("Check code label", "custom1");
+}
+
+function workerCreateWithoutCode($name, $surName, $ID){
+    commonCreate("Workers");
+    commonWorkerForm($name, $surName, $ID);
+    commonEmptyCodeValidation();
+}
+
+function workerCheckTabs(){
+    workerCheckAssignedCriteria($workerNewName, 5, $criteriaName);
+    workerCheckAssignedCalendar($workerNewName, 5, $calendarName);
+    workerCheckAssignedCostCategory($workerNewName, 5, $costCategoryName);
+}
+
+function workerCheckAssignedCriteria($workerName, $cell, $criterion){
+    commonCriteriaCreate($criteriaName, [$criteriaName]);
+    commonResourceEditAssignedCriteriaForm("Workers", $workerName, $cell, $criterion);
+    commonCriteriaTryDeleteAssigned($criteriaName);
+}
+
+function workerCheckAssignedCalendar($workerName, $cell, $calendar){
+    commonCalendarCreate($calendar);
+    commonResourceEditAssignedCalendarForm("Workers", $workerName, $cell, $calendar);
+    commonCalendarTryDeleteAssignedCalendar($calendar, 3);
+}
+
+function workerCheckAssignedCostCategory($workerName, $cell, $cCategory){
+    commonWorkHourCreate("HourForWorker", "12");
+    commonCostCategoryCreate($cCategory, "HourForWorker");
+    commonResourceEditAssignedCostCategoryForm("Workers", $workerName, $cell, $cCategory);
+    commonWorkerAcctionValidation("saved");
+    _log("Assign the created cost category", "custom1");
+    commonCostCategoryTryDeleteAssignedCostCategory($cCategory, 3);
+}
+
+function workerDeleteRequiredElements(){
+    commonCriteriaDelete($criteriaName);
+    commonCalendarDelete($calendarName);
+    commonCostCategoryDelete($costCategoryName);
+    commonWorkHourDelete("HourForWorker");
+    _log("All required elements deleted", "custom1");
+}
+
+function workerAssignProject($project, $worker, $workerSurName){
+    commonCreateProject($project);
+    commonCreateTask($project, "taskForWorker", "100");
+    workerAssignProjectForm($worker, $workerSurName);
+    workerTryDeleteAssigned($worker);
+    commonDeleteProject($project);
+}
+
+function workerAssignProjectForm($workerName, $workerSurName){
+    _click(_cell("Project Scheduling"));
+    _doubleClick(_div("box standard-task yui-resize unassigned"));
+    _setValue(_textbox(0, _near(_span("Select criteria or resources"))), $workerName);
+    _removeFocus(_textbox(0, _near(_span("Select criteria or resources"))));
+    _click(_div($workerSurName+", "+$workerName));
+    _click(_cell($workerSurName+", "+$workerName));
+    _click(_cell("Add"));
+    _click(_row("Accept[2]"));
+    _assertExists(_div("box standard-task assigned"));
+    _log("Task assigned", "custom1");
+    _click(_image("ico_save.png"));
+    _click(_cell("OK"));
+}
+
+function workerTryDeleteAssigned($worker){
+    _click(_link("Workers"));
+    _click(_image("ico_borrar1.png", _in(_cell(5, _near(_cell($worker))))));
+    commonResourceTryDeleteAssignedValidation();
+}
+
+/* Validations */
+
+function workerNotValid($worker){
+    _assertExists(_span("ID already used. It has to be be unique"));
+    _assert(_isVisible(_span("ID already used. It has to be be unique")));
+}
+
+function workerEmptyFields(){
+    _assertExists(_div("This field may not be empty or contain only spaces."));
+    _assert(_isVisible(_div("This field may not be empty or contain only spaces.")));
+}
+
+/* test values */
+var $workerName = "new";
+var $workerSurName = "newSon";
+var $workerID = "12345678";
+var $workerName2 = "new2";
+var $workerNewName = "newest";
+var $criteriaName = "CriteriaForWorkers";
+var $costCategoryName ="costCategoryForWorker";
+var $calendarName = "calendarForWorker";
+var $projectName = "ProjectForWorker";
+
+/* test actions */
+commonLogin("admin", "admin");
+
+commonWorkerCreate($workerName, $workerSurName, $workerID);
+workerCreateDuplicateType($workerName, $workerSurName, $workerID);
+workerCreateEmpty($workerName, $workerSurName, $workerID);
+workerEdit($workerName, $workerNewName, 5);
+workerCheckTabs();
+workerCheckCode($workerName, $workerSurName, $workerID);
+workerAssignProject($projectName, $workerNewName, $workerSurName);
+commonWorkerDelete($workerNewName);
+workerDeleteRequiredElements();
+
+commonLogout();

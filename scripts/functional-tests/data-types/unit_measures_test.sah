@@ -1,0 +1,153 @@
+/*
+ * This file is part of LibrePlan
+ *
+ * Copyright (C) 2011-2012 Igalia, S.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* Included tests
+ *
+ * 1 - Create a new Material Unit
+ * 2 - Create a Material Unit with duplicate type (it should be a failure)
+ * 3 - Create a Material Unit with empty type (it should be a failure)
+ * 4 - Edit a Material Unit
+ * 5 - Assign a Material Unit to a material
+ *   5.1 Create a material and assign the Unit
+ *   5.1 Try to delete the assigned Unit (it should be a failure)
+ *   5.2 Delete the material
+ * 6 - Check code
+ *   6.1 - Change configuration
+ *   6.2 - Try to create a new Material Unit without Code (it should be a failure)
+ *   6.3 - Change configuration like before
+ * 7 - Delete Material Unit
+ *
+*/
+_include("../common_functions.sah");
+
+function unitMeasureCreate($type){
+    commonCreate("Material Units");
+    unitMeasureForm($type);
+    commonSaveValidation("Material Unit", $type);
+    _log("Create a new Material Unit", "custom1");
+}
+
+function unitMeasureCreateDuplicate($type){
+    commonCreate("Material Units");
+    unitMeasureForm($type);
+    unitMeasureNotValidation($type);
+    _log("Create Material Unit Duplicate", "custom1");
+}
+
+function unitMeasureCreateEmpty(){
+    commonCreate("Material Units");
+    unitMeasureForm("");
+    _assertExists(_div("cannot be empty"));
+    _assert(_isVisible(_div("cannot be empty")));
+    _log("Create Material Unit Empty", "custom1");
+}
+
+function unitMeasureForm($name){
+    _setValue(_textbox(0, _near(_span("Name"))), $name);
+    _removeFocus(_textbox(0, _near(_span("Name"))));
+    _click(_cell("Save & Continue"));
+}
+
+/* test to check a that LibrePlan give us a error */
+function unitMeasureNotValidation(){
+    _assertExists(_div("The meausure name is not valid. There is another unit type with the same measure name"));
+    _assert(_isVisible(_div("The meausure name is not valid. There is another unit type with the same measure name")));
+}
+
+function unitMeasureEdit($oldName, $newName, $cell){
+    commonEdit($oldName, $cell);
+    unitMeasureForm($newName);
+    commonSaveValidation("Material Unit", $newName);
+    _log("Edit the Material Unit", "custom1");
+}
+
+function unitMeasureAssign($UMeasure, $materialName){
+    materialFormCreate($materialName, $UMeasure);
+    unitMeasureTryDeleteAssigned($UMeasure);
+    materialFormDelete($materialName);
+    _log("Assign an Material Unit to a material", "custom1");
+}
+
+function materialFormCreate($material, $measure){
+    _click(_link("Materials"));
+    _click(_span("z-dottree-ico z-dottree-firstspacer"));
+    _click(_cell("New"));
+    _setValue(_textbox("z-textbox[2]"), $material);
+    _setSelected(_select(0), $measure);
+    _click(_cell("Save"));
+    _assertExists(_div("Materials saved"));
+    _assert(_isVisible(_div("Materials saved")));
+}
+
+function unitMeasureTryDeleteAssigned($UMeasure){
+    _click(_link("Material Units"));
+    _click(_image("ico_borrar1.png", _in(_cell(1, _near(_cell($UMeasure))))));
+    _assertNotExists(_cell("OK"));
+    _assertNull(_cell("OK"));
+    _assertExists(_cell($UMeasure));
+    _assert(_isVisible(_cell($UMeasure)));
+}
+
+function unitMeasureCheckCode($unitMeasureName){
+    commonConfigurationChangeCheckboxMainPreferences("Material Units");
+    unitMeasureCreateWithoutCode($unitMeasureName);
+    commonConfigurationChangeCheckboxMainPreferences("Material Units");
+    _log("Check code label", "custom1");
+}
+
+function unitMeasureCreateWithoutCode($name){
+    commonCreate("Material Units");
+    unitMeasureForm($name);
+    unitMeasureEmptyCodeValidation();
+}
+
+function unitMeasureEmptyCodeValidation(){
+    _assertExists(_div("cannot be empty"));
+    _assert(_isVisible(_div("cannot be empty")));
+}
+
+function materialFormDelete($materialName){
+    _click(_link("Materials"));
+    var $qtengo = _getValue(_textbox(1, _near(_select(0))));
+    if ($qtengo == $materialName)
+    {
+    _click(_image("ico_borrar1.png", _in(_cell(6, _near(_select(0))))));
+    _click(_cell("Save"));
+    _assertExists(_div("Materials saved"));
+    _assert(_isVisible(_div("Materials saved")));
+    }
+}
+
+/* test values */
+var $UMeasureName = "new";
+var $UMeasureName2 = "newest";
+var $materialName = "NewMaterial";
+
+/* test actions */
+commonLogin("admin","admin");
+unitMeasureCreate($UMeasureName);
+unitMeasureCreateDuplicate($UMeasureName);
+unitMeasureCreateEmpty();
+unitMeasureEdit($UMeasureName, $UMeasureName2, 1);
+unitMeasureAssign($UMeasureName2, $materialName);
+unitMeasureCheckCode($UMeasureName);
+commonDelete("Material Units", $UMeasureName2, 1);
+commonDeleteValidation("Material Unit", $UMeasureName2);
+_log("Delete the Material Unit", "custom1");
+commonLogout();

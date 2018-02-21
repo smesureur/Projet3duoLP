@@ -1,0 +1,132 @@
+<!--
+  This file is part of LibrePlan
+
+  Copyright (C) 2009-2010 Fundación para o Fomento da Calidade Industrial e
+                          Desenvolvemento Tecnolóxico de Galicia
+  Copyright (C) 2010-2011 Igalia, S.L.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- Tab panel subcontract -->
+<tabpanel id="${arg.id}">
+    <grid>
+        <rows>
+            <row>
+                <label value="${i18n:_('External company')}" />
+                <hbox>
+                     <combobox model="@{subController.subcontractorExternalCompanies}"
+                            value="@{subController.subcontractedTaskData.externalCompany.name}"
+                            onSelect="subController.setExternalCompany(self.selectedItem);"
+                            visible="@{subController.notSent}" >
+                        <comboitem self="@{each='externalCompany'}"
+                            value="@{externalCompany}"
+                            label="@{externalCompany.name}"
+                            readonly="@{subController.sent}" />
+                    </combobox>
+                    <label value="@{subController.subcontractedTaskData.externalCompany.name}"
+                        visible="@{subController.sent}"/>
+                </hbox>
+            </row>
+
+            <row>
+                <label value="${i18n:_('Subcontracting date')}" />
+                <label value="@{subController.subcontractedTaskData.subcontratationDate,
+                   converter='org.libreplan.web.common.typeconverters.DateConverter'}"
+                   visible="@{subController.sent}"/>
+            </row>
+            <row>
+                <label value="${i18n:_('Subcontracting communication date')}" />
+                <label value="@{subController.subcontractedTaskData.subcontractCommunicationDate,
+                   converter='org.libreplan.web.common.typeconverters.DateConverter'}"
+                   visible="@{subController.sent}"/>
+            </row>
+            <row>
+                <label value="${i18n:_('Work description')}" />
+                <textbox value="@{subController.subcontractedTaskData.workDescription}"
+                    readonly="@{subController.sent}" hflex="1"/>
+            </row>
+            <row>
+                <label value="${i18n:_('Subcontract price')}" />
+                <decimalbox value="@{subController.subcontractedTaskData.subcontractPrice}"
+                    readonly="@{subController.sent}" format="@{subController.moneyFormat}"/>
+            </row>
+            <row>
+                <label value="${i18n:_('Subcontracting code')}" />
+                <textbox value="@{subController.subcontractedTaskData.subcontractedCode}"
+                    readonly="@{subController.sent}"/>
+            </row>
+            <row>
+                <label value="${i18n:_('Exportation options')}" />
+                <vbox>
+                    <checkbox label="${i18n:_('Node without children')}"
+                            checked="@{subController.subcontractedTaskData.nodeWithoutChildrenExported}"
+                            disabled="@{subController.sent}" />
+                    <checkbox label="${i18n:_('Labels')}"
+                            checked="@{subController.subcontractedTaskData.labelsExported}"
+                            disabled="@{subController.sent}" />
+                    <checkbox label="${i18n:_('Material assignments')}"
+                            checked="@{subController.subcontractedTaskData.materialAssignmentsExported}"
+                            disabled="@{subController.sent}" />
+                    <checkbox label="${i18n:_('Hours groups')}"
+                            checked="@{subController.subcontractedTaskData.hoursGroupsExported}"
+                            disabled="@{subController.sent}" />
+                </vbox>
+            </row>
+        </rows>
+    </grid>
+    <groupbox style="margin-top: 5px" sclass="assignedresources" closable="false">
+        <caption label="${i18n:_('Deliver date')}" />
+
+        <separator spacing="10px"/>
+
+        <hbox align="bottom" sclass="add-resources-or-criteria">
+            <label value="${i18n:_('New delivery date')}" />
+            <datebox id="newDeliverDate" />
+            <button label="${i18n:_('Add')}" onClick="subController.addDeliverDate(newDeliverDate)"/>
+        </hbox>
+
+        <separator spacing="20px"/>
+
+        <grid id="gridDeliverDate"
+            model="@{subController.deliverDates}"
+            rowRenderer="@{subController.deliverDatesRenderer}"
+	        mold="paging" pageSize="10" fixedLayout="true" width="880px">
+            <columns>
+                <column label="${i18n:_('Save date')}" sort="auto(saveDate)" align="center" width="220px"/>
+                <column label="${i18n:_('Deliver date')}" align="center" width="220px"/>
+                <column label="${i18n:_('Communication date')}" align="center" width="220px"/>
+                <column label="${i18n:_('Operations')}" align="center"/>
+            </columns>
+        </grid>
+    </groupbox>
+
+    <groupbox style="margin-top: 5px" sclass="assignedresources" closable="false">
+        <caption label="${i18n:_('End date communicated by the subcontractor.')}" />
+
+        <separator spacing="10px"/>
+
+        <grid id="gridEndDates"
+            model="@{subController.askedEndDates}"
+            rowRenderer="@{subController.endDatesRenderer}"
+	        mold="paging" pageSize="10" fixedLayout="true" width="880px">
+            <columns>
+                <column label="${i18n:_('End date')}" sort="auto(saveDate)" align="center" width="320px"/>
+                <column label="${i18n:_('Communication date')}" align="center" width="320px"/>
+                <column label="${i18n:_('Operations')}" align="center"/>
+            </columns>
+        </grid>
+    </groupbox>
+
+</tabpanel>

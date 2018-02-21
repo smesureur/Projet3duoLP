@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!--
+    See org.libreplan.web.test.ws.resources.api.ResourceServiceTest for a
+    complete list of test cases.
+ -->
+
+<resource-list xmlns="http://rest.ws.libreplan.org">
+
+    <!--  *** Machines *** -->
+
+    <!-- OK -->
+    <machine code="m1" name="m1-name" description="m1-desc"/>
+
+    <!--  Criterion satisfaction of incorrect type. -->
+    <machine code="m2" name="m2-name" description="m2-desc">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="m2-s1"
+                criterion-type-name="WORK_RELATIONSHIP"
+                criterion-name="hiredResourceWorkingRelationship"
+                start-date="2009-01-01"
+                end-date=""/>
+        </criterion-satisfaction-list>
+    </machine>
+
+    <!-- [It assumes existence of "TestCostCategory"] OK. -->
+    <machine code="m3" name="m3-name" description="m3-desc">
+        <resources-cost-category-assignment-list>
+            <resources-cost-category-assignment
+                code="m3-a1"
+                cost-category-name="TestCostCategory"
+                start-date="2001-01-01"/>
+            <resources-cost-category-assignment
+                code="m3-a2"
+                cost-category-name="TestCostCategory"
+                start-date="2000-01-01"
+                end-date="2000-04-01"/>
+        </resources-cost-category-assignment-list>
+    </machine>
+
+    <!-- [It assumes existence of "TestCostCategory"] Repeated cost assignment
+         code (used by another machine). -->
+    <machine code="m4" name="m4-name" description="m4-desc">
+        <resources-cost-category-assignment-list>
+            <resources-cost-category-assignment
+                code="m3-a1"
+                cost-category-name="TestCostCategory"
+                start-date="2001-01-01"/>
+        </resources-cost-category-assignment-list>
+    </machine>
+
+    <!-- OK or not OK depending on the existence of "TestCalendar". -->
+    <machine code="m5" name="m5-name" description="m5-desc"
+        calendar-name="TestCalendar"/>
+
+    <!-- [It assumes existence of "TestCostCategory"] Missing start date and
+         code, and repeated code in cost assignments. -->
+    <machine code="m6" name="m6-name" description="m6-desc">
+        <resources-cost-category-assignment-list>
+            <resources-cost-category-assignment
+                code="m6-a1"
+                cost-category-name="TestCostCategory"
+                end-date="2000-01-01"/>
+            <resources-cost-category-assignment
+                cost-category-name="TestCostCategory"
+                start-date="2001-01-01"/>
+            <resources-cost-category-assignment
+                code="m6-a1"
+                cost-category-name="TestCostCategory"
+                start-date="2000-01-01" end-date="2000-02-01"/>
+        </resources-cost-category-assignment-list>
+    </machine>
+
+    <!-- [It assumes existence of "TestCostCategory"] Negative interval. -->
+    <machine code="m7" name="m7-name" description="m7-desc">
+        <resources-cost-category-assignment-list>
+            <resources-cost-category-assignment
+                code="m7-a1"
+                cost-category-name="TestCostCategory"
+                start-date="2000-02-01"
+                end-date="2000-01-01"/>
+        </resources-cost-category-assignment-list>
+    </machine>
+
+    <!-- [It assumes existence of "TestCostCategory"] Overlapping intervals. -->
+    <machine code="m8" name="m8-name" description="m8-desc">
+        <resources-cost-category-assignment-list>
+            <resources-cost-category-assignment
+                code="m8-a1"
+                cost-category-name="TestCostCategory"
+                start-date="2000-02-01"
+                end-date="2000-05-01"/>
+            <resources-cost-category-assignment
+                code="m8-a2"
+                cost-category-name="TestCostCategory"
+                start-date="2000-01-01"
+                end-date="2000-03-01"/>
+        </resources-cost-category-assignment-list>
+    </machine>
+
+    <!--  Missing code and name (description is optional). -->
+    <machine code="" description=""/>
+
+    <!--  *** Workers *** -->
+
+    <!-- OK -->
+    <worker code="w1" first-name="w1-firstName" surname="w1-surname" nif="w1-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w1-s1"
+                criterion-type-name="WORK_RELATIONSHIP"
+                criterion-name="hiredResourceWorkingRelationship"
+                start-date="2009-01-01"
+                end-date=""/>
+            <criterion-satisfaction
+                code="w1-s2"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2009-12-24"
+                end-date="2009-12-25"/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!--  Missing start date and code, and repeated code in criterion
+          satisfactions. -->
+    <worker code="w2" first-name="w2-firstName" surname="w2-surname" nif="w2-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w2-s1"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                end-date="2009-12-25"/>
+            <criterion-satisfaction
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2009-12-25"/>
+             <criterion-satisfaction
+                code="w2-s1"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2000-01-01" end="2000-02-01"/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!--  Non-existent criterion type. -->
+    <worker code="w3" first-name="w3-firstName" surname="w3-surname" nif="w3-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w3-s1"
+                criterion-type-name="WORK_RELATIONSHIP_XXX"
+                criterion-name="hiredResourceWorkingRelationship"
+                start-date="2009-01-01"
+                end-date=""/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!--  Non-existent criterion. -->
+    <worker code="w4" first-name="w4-firstName" surname="w4-surname" nif="w4-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w4-s1"
+                criterion-type-name="WORK_RELATIONSHIP"
+                criterion-name="hiredResourceWorkingRelationshipXXX"
+                start-date="2009-01-01"
+                end-date=""/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!-- Criterion not specified. -->
+    <worker code="w5" first-name="w5-firstName" surname="w5-surname" nif="w5-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w5-s1"
+                criterion-type-name="WORK_RELATIONSHIP"
+                start-date="2009-01-01"
+                end-date=""/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!-- Criterion type not specified. -->
+    <worker code="w6" first-name="w6-firstName" surname="w6-surname" nif="w6-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w6-s1"
+                criterion-name="hiredResourceWorkingRelationship"
+                start-date="2009-01-01"
+                end-date=""/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!--  Missing first name, surname, and nif. -->
+    <worker code="w7" first-name="" nif=""/>
+
+    <!-- OK or not OK depending on the existence of "TestCalendar". -->
+    <worker code="w8" first-name="w8-firstName" surname="w8-surname" nif="w8-nif"
+        calendar-name="TestCalendar" />
+
+    <!-- [It assumes existence of "TestCalendar" and "TestCostCategory"] OK -->
+    <worker code="w9" first-name="w9-firstName" surname="w9-surname" nif="w9-nif"
+        calendar-name="TestCalendar">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w9-s1"
+                criterion-type-name="WORK_RELATIONSHIP"
+                criterion-name="hiredResourceWorkingRelationship"
+                start-date="2009-01-01"
+                end-date=""/>
+            <criterion-satisfaction
+                code="w9-s2"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2009-12-24"
+                end-date="2009-12-25"/>
+        </criterion-satisfaction-list>
+        <resources-cost-category-assignment-list>
+            <resources-cost-category-assignment
+                code="w9-a1"
+                cost-category-name="TestCostCategory"
+                start-date="2001-01-01"/>
+            <resources-cost-category-assignment
+                code="w9-a2"
+                cost-category-name="TestCostCategory"
+                start-date="2000-01-01"
+                end-date="2000-04-01"/>
+        </resources-cost-category-assignment-list>
+    </worker>
+
+    <!--  Negative interval. -->
+    <worker code="w10" first-name="w10-firstName" surname="w10-surname" nif="w10-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w10-s1"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2000-02-01"
+                end-date="2000-01-01"/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!-- Criterion satisfaction overlapping in "LEAVE :: paternityLeave". -->
+    <worker code="w11" first-name="w11-firstName" surname="w11-surname" nif="w11-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w11-s1"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2000-01-01"
+                end-date="2000-02-01"/>
+            <criterion-satisfaction
+                code="w11-s2"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2000-01-15"
+                end-date="2000-02-01"/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!-- Criterion satisfaction overlapping (LEAVE does not allow
+         simultaneous criterion satisfactions in intervals that overlap). -->
+    <worker code="w12" first-name="w12-firstName" surname="w12-surname" nif="w12-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w12-s1"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2000-01-01"
+                end-date="2000-02-01"/>
+            <criterion-satisfaction
+                code="w12-s2"
+                criterion-type-name="LEAVE"
+                criterion-name="medicalLeave"
+                start-date="2000-01-15"
+                end-date="2000-02-01"/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!-- [It assumes existence of "TestLocationGroupCriterion" and
+         "TestLocationGroupCriterion2"] OK
+         (LOCATION_GROUP allows simultaneous criterion satisfactions in
+         intervals that overlap). -->
+    <worker code="w13" first-name="w13-firstName" surname="w13-surname" nif="w13-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w13-s1"
+                criterion-type-name="LOCATION_GROUP"
+                criterion-name="TestLocationGroupCriterion"
+                start-date="2000-01-01"
+                end-date="2000-02-01"/>
+            <criterion-satisfaction
+                code="w13-s2"
+                criterion-type-name="LOCATION_GROUP"
+                criterion-name="TestLocationGroupCriterion2"
+                start-date="2000-01-15"
+                end-date="2000-02-01"/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!-- [It assumes existence of "TestLocationGroupCriterion" and
+         "TestLocationGroupCriterion2"] Criterion satisfaction overlapping in
+         "LOCATION_GROUP :: TestLocationGroupCriterion". -->
+    <worker code="w14" first-name="w14-firstName" surname="w14-surname" nif="w14-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w14-s1"
+                criterion-type-name="LOCATION_GROUP"
+                criterion-name="TestLocationGroupCriterion"
+                start-date="2000-01-01"
+                end-date="2000-02-01"/>
+            <criterion-satisfaction
+                code="w14-s2"
+                criterion-type-name="LOCATION_GROUP"
+                criterion-name="TestLocationGroupCriterion"
+                start-date="2000-01-15"
+                end-date="2000-02-01"/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!-- There is another worker with the same first name, surname, and nif. -->
+    <worker code="w15" first-name="w1-firstName" surname="w1-surname" nif="w1-nif"/>
+
+    <!-- Repeated criterion satisfaction code (used by another worker). -->
+    <worker code="w16" first-name="w16-firstName" surname="w16-surname" nif="w16-nif">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="w1-s1"
+                criterion-type-name="WORK_RELATIONSHIP"
+                criterion-name="hiredResourceWorkingRelationship"
+                start-date="2009-01-01"
+                end-date=""/>
+        </criterion-satisfaction-list>
+    </worker>
+
+    <!-- Missing code. -->
+    <worker first-name="w17-firstName" surname="w17-surname" nif="w17-nif"/>
+
+</resource-list>

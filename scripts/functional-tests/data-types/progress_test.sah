@@ -1,0 +1,140 @@
+/*
+ * This file is part of LibrePlan
+ *
+ * Copyright (C) 2011-2012 Igalia, S.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* Included tests
+ * ==============
+ *
+ * 1 - Create a new process
+ * 2 - Create a process with the same name (it should be a failure)
+ * 3 - Create a new process without name (it should be a failure)
+ * 4 - Check Max value and precision
+ *   4.1 - Wrong values (last input precision)
+ *   4.2 - Wrong values (last input Max Value)
+ * 5 - Edit a process
+ * 6 - Try to delete a previously assigned progress (it should be a failure)
+ *   6.1 - Create a Project
+ *   6.2 - Assign a progress to a project
+ *   6.3 - try to delete this progress
+ *   6.4 - Delete the previously created project
+ * 7 - Delete a process
+ * 8 - Try to edit a default value
+ * 9 - Try to delete a default value
+*/
+_include("../common_functions.sah");
+
+function progressCreateDuplicate($name) {
+    commonCreate("Progress Types");
+    commonProgressForm($name);
+    progressNotValid();
+    _log("Do not allow create a progress with duplicate name", "custom1");
+}
+
+function progressCreateEmpty() {
+    commonCreate("Progress Types");
+    _click(_cell("Save"));
+    _assertExists(_div("The name is not valid, the name must not be null"));
+    _assert(_isVisible(_div("The name is not valid, the name must not be null")));
+    _click(_link("Progress Types"));
+    _log("Do not allow create a progress without name", "custom1");
+}
+
+/* test to check a that LibrePlan give us a error */
+function progressNotValid(){
+    _assertExists(_div("The name is not valid, there is another progress type with the same name."));
+    _assert(_isVisible(_div("The name is not valid, there is another progress type with the same name.")));
+}
+
+function progressCreateWrongPrecisson($name, $maxValue, $precission){
+    progressPrecisson($name, $maxValue, $precission);
+    progressMaxValue($name, $maxValue, $precission);
+    _log("Check Max value and precision", "custom1");
+}
+
+function progressPrecisson($name, $maxValue, $precission){
+    commonCreate("Progress Types");
+    _setValue(_textbox(0, _near(_div("Unit name"))), $name);
+    _removeFocus(_textbox(0, _near(_div("Unit name"))));
+    _setValue(_textbox(0, _near(_div("Default max value"))), $maxValue);
+    _setValue(_textbox(0, _near(_div("Precision"))), $precission);
+    _click(_cell("Save"));
+    _assertExists(_div("Invalid value. Precission value must be lower than the Default Max value."));
+    _assert(_isVisible(_div("Invalid value. Precission value must be lower than the Default Max value.")));
+}
+
+function progressMaxValue($name, $maxValue, $precission){
+    commonCreate("Progress Types");
+    _setValue(_textbox(0, _near(_div("Unit name"))), $name);
+    _removeFocus(_textbox(0, _near(_div("Unit name"))));
+    _setValue(_textbox(0, _near(_div("Precision"))), $precission);
+    _setValue(_textbox(0, _near(_div("Default max value"))), $maxValue);
+    _click(_cell("Save"));
+    _assertExists(_div("Value is not valid, the default max value must be greater than the precision value"));
+    _assert(_isVisible(_div("Value is not valid, the default max value must be greater than the precision value")));
+}
+function progressEdit($oldName, $newName, $cell) {
+    commonEdit($oldName, 3);
+    _setValue(_textbox(0, _near(_div("Unit name"))), $newName);
+    _removeFocus(_textbox(0, _near(_div("Unit name"))));
+    _click(_cell("Save & Continue"));
+    commonSaveValidation("Progress Type", $newName);
+    _log("Edit a progress", "custom1");
+}
+
+function progressTryEditDefault($defaultValue){
+    var $fakeName = "fakenew";
+    commonEdit($defaultValue, 3);
+    commonProgressForm($fakeName);
+    _assertNotEqual("Progress Type \""+$fakeName+"\" saved");
+    _assertNull(_cell("Progress Type \""+$fakeName+"\" saved"));
+    _assertExists(_div("Percentage"));
+    _assert(_isVisible(_div("Percentage")));
+    _click(_link("Progress Types"));
+    _log("Try to edit a default progress", "custom1");
+}
+
+function progressTryDelDefault($defaultValue){
+    _click(_image("ico_borrar1.png", _in(_cell(3, _near(_cell($defaultValue))))));
+    _assertNotEqual("Delete Progress Type \""+$defaultValue+"\". Are you sure?");
+    _assertNull(_cell("Delete Progress Type \""+$defaultValue+"\". Are you sure?"));
+    _log("Try to delete a default progress", "custom1");
+}
+
+/* test values */
+var $progressName = "new";
+var $progressNewName = "newest";
+var $defaultValue = "units";
+var $projectName = "new project";
+var $progressMaxValue = "10";
+var $progressPrecission = "90";
+
+
+/* test actions */
+
+commonLogin("admin", "admin");
+commonProgressCreate($progressName);
+progressCreateDuplicate($progressName);
+progressCreateEmpty();
+progressCreateWrongPrecisson($progressNewName, $progressMaxValue, $progressPrecission);
+progressEdit($progressName, $progressNewName, 3);
+commonProgressAssigned($projectName, $progressNewName);
+commonProgressDelete($progressNewName);
+progressTryEditDefault($defaultValue);
+progressTryDelDefault($defaultValue);
+
+commonLogout();

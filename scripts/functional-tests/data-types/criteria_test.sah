@@ -1,0 +1,148 @@
+/*
+ * This file is part of LibrePlan
+ *
+ * Copyright (C) 2011-2012 Igalia, S.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* Included tests
+ *
+ * 1 - Create a new criterion
+ * 2 - Create a criterion with duplicate type (it should be a failure)
+ * 3 - Create a criterion with empty type
+ * 4 - Create a criterion with duplicate name (it should be a failure)
+ * 5 - Create with Hierarchy
+ * 6 - Create without Hierarchy (clicking on a previous name)
+ * 7 - Edit a criterion
+ * 8 - Check code
+ *   8.1 - Change configuration
+ *   8.2 - Try to create a new criterion without Code (it should be a failure)
+ *   8.3 - Change configuration like before
+ * 9 - Delete all criteria
+ *
+*/
+_include("../common_functions.sah");
+
+function criteriaCreateDuplicateType($type, $names){
+    commonCreate("Criteria");
+    commonCriteriaForm($type, $names);
+    criteriaNotValid();
+    _log("Do not allow create a criterion Duplicate type", "custom1");
+}
+
+function criteriaCreateEmpty($type, $names){
+    commonCreate("Criteria");
+    commonCriteriaForm($type, $names);
+    _assertExists(_div("criterion type name not specified"));
+    _assert(_isVisible(_div("criterion type name not specified")));
+    _log("Do not allow create a criterion with empty type", "custom1");
+}
+
+function criteriaCreateDuplicateName($type, $name){
+    commonCreate("Criteria");
+    _setValue(_textbox(0, _near(_span("Name"))), $type);
+    _setValue(_textbox(0, _near(_span("New criterion"))), $name);
+    _click(_cell("Add"));
+    _setValue(_textbox(0, _near(_span("New criterion"))), $name);
+    _click(_cell("Add"));
+    _assertExists(_div("Already exists another criterion with the same name"));
+    _assert(_isVisible(_div("Already exists another criterion with the same name")));
+    _log("Do not allow create a criterion with duplicate name", "custom1");
+}
+
+function criteriaCreateWithHierarchy($type, $name, $name2){
+    commonCreate("Criteria");
+    _setValue(_textbox(0, _near(_span("Name"))), $type);
+    _setValue(_textbox(0, _near(_span("New criterion"))), $name);
+    _click(_cell("Add"));
+    _click(_div(0, _near(_div("z-treecell-cnt z-overflow-hidden"))));
+    _setValue(_textbox(0, _near(_span("New criterion"))), $name2);
+    _click(_cell("Add"));
+    _assertExists(_span("z-tree-line z-tree-spacer"));
+    _assert(_isVisible(_span("z-tree-line z-tree-spacer")));
+    _click(_cell("Save"));
+    _log("Create a criterion with Hierarchy", "custom1");
+}
+
+function criteriaCreateWithoutHierarchy($type, $name, $name2){
+    commonCreate("Criteria");
+    _setValue(_textbox(0, _near(_span("Name"))), $type);
+    _click(_checkbox(0, _near(_div("Hierarchy"))));
+    _click(_cell("OK"));
+    _setValue(_textbox(0, _near(_span("New criterion"))), $name);
+    _click(_cell("Add"));
+    _click(_div(0, _near(_div("z-treecell-cnt z-overflow-hidden"))));
+    _setValue(_textbox(0, _near(_span("New criterion"))), $name2);
+    _click(_cell("Add"));
+    _assertExists(_span("z-tree-ico z-tree-firstspacer[1]"));
+    _assert(_isVisible(_span("z-tree-ico z-tree-firstspacer[1]")));
+    _click(_cell("Save"));
+    _log("Create a criterion without Hierarchy", "custom1");
+}
+
+function criteriaEdit($oldName, $newName, $cell){
+    commonEdit($oldName, $cell);
+    _setValue(_textbox(0, _near(_span("Name"))), $newName);
+    _removeFocus(_textbox(0, _near(_span("Name"))), $newName);
+    _click(_cell("Save & Continue"));
+    commonSaveValidation("Criterion Type", $newName);
+    _log("Edit a criterion", "custom1");
+}
+
+/* test to check a that LibrePlan give us a error */
+function criteriaNotValid(){
+    _assertExists(_div("Criterion Type name is already being used"));
+    _assert(_isVisible(_div("Criterion Type name is already being used")));
+}
+
+function criteriaCheckCode($criteriaType){
+    commonConfigurationChangeCheckboxMainPreferences("Criteria");
+    criteriaCreateWithoutCode($criteriaType);
+    commonConfigurationChangeCheckboxMainPreferences("Criteria");
+    _log("Check code label", "custom1");
+}
+
+function criteriaCreateWithoutCode($type, $typeList){
+    commonCreate("Criteria");
+    commonCriteriaForm($type, [$typeList]);
+    commonEmptyCodeValidation();
+}
+
+/* test values */
+var $criteriaType = "new";
+var $criteriaType2 = "new2";
+var $criteriaType3 = "new3";
+var $criteriaNewType = "newest";
+var $criteriaName = "criterion1";
+var $criteriaName2 = "criterion2";
+
+
+/* test actions */
+commonLogin("admin","admin");
+
+commonCriteriaCreate($criteriaType, [$criteriaType]);
+criteriaCreateDuplicateType($criteriaType, [$criteriaType]);
+criteriaCreateEmpty("", [$criteriaType]);
+criteriaCreateDuplicateName($criteriaType2, $criteriaName);
+criteriaCreateWithHierarchy($criteriaType2, $criteriaName, $criteriaName2);
+criteriaCreateWithoutHierarchy($criteriaType3, $criteriaName, $criteriaName2);
+criteriaEdit($criteriaType, $criteriaNewType, 4);
+criteriaCheckCode($criteriaType, [$criteriaType]);
+commonCriteriaDelete($criteriaNewType);
+commonCriteriaDelete($criteriaType2);
+commonCriteriaDelete($criteriaType3);
+_log("Deleted all criteria", "custom1");
+
+commonLogout();

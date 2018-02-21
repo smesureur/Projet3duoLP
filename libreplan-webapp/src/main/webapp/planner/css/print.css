@@ -1,0 +1,96 @@
+/****
+   Base stylesheet used for printing, to which
+   height, with and label parameters had to be added
+   as CutyCapt does not allow to use @import directive
+*******/
+
+/* ------ Hide non printable elements ------ */
+body div.scheduling-graphics {
+    height: 0px !important;
+    display: none !important;
+}
+
+body .perspectives-column {
+    display: none !important;
+}
+
+body .mainmenu, body .user-area, body .help-link {
+    display: none !important;
+}
+
+body .footer {
+    display: none !important;
+}
+
+body .footer-print {
+    display: inline !important;
+}
+
+/* ------ Remove scrolls  ------ */
+.leftpanelcontainer {
+    overflow: hidden !important;
+}
+
+.rightpanellayout .z-center-body {
+    overflow: hidden !important;
+}
+
+#ganttpanel_scroller_x, #ganttpanel_scroller_y {
+    overflow: hidden !important;
+}
+
+.main-area, .orderslayout-area, .orderelements-tab, #timetrackedtable,
+.plannerlayout .taskspanelgap #timetracker, .leftpanelcontainer {
+    overflow: hidden !important;
+}
+
+/* ------ Reposition main-area  ------ */
+body .main-area {
+    margin-left: 0;
+    margin-top: -31px;
+}
+
+/* ------ Hide possible Javascript execution exceptions  ------ */
+#zk_err_1 {
+    display: none;
+}
+
+td.migas_linea {
+    padding-top:25px;
+}
+
+.border-container .taskgroup_start,
+.border-container .taskgroup_end {
+    repeat-y: none;
+}
+
+#listtasks .milestone_end {
+    repeat-y: none;
+}
+
+.main-area .taskdetailsContainer,
+.leftpanelgap .z-tree-body {
+    overflow-x: hidden !important;
+}
+
+.z-south-colpsd {
+    display:none;
+}
+
+.z-center > div, .taskpanel > div {
+ overflow: hidden !important;
+}
+
+.logo-area {
+    height: 70px;
+}
+
+.listdetails input.task_title {
+    width: 100% !important;
+}
+
+.migas_linea span.scheduling-state {
+    display: none;
+}
+
+/* ------ Calculated body width and height added via CutyPrint CSS generator ------ */

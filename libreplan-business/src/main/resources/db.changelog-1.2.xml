@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="smontes" id="initial-database-creation-customer-comunication">
+        <createTable tableName="customer_comunication">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="customer_comunication_pkey"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deadline" type="DATETIME"/>
+            <column name="comunication_type" type="INTEGER"/>
+            <column name="comunication_date" type="DATETIME"/>
+            <column name="reviewed" type="BOOLEAN"/>
+            <column name="order_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="smontes" id="initial-database-creation-subcontractor-comunication">
+        <createTable tableName="subcontractor_comunication">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="subcontractor_comunication_pkey"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comunication_type" type="INTEGER"/>
+            <column name="comunication_date" type="DATETIME"/>
+            <column name="reviewed" type="BOOLEAN"/>
+            <column name="subcontracted_task_data" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="smontes" id="initial-database-creation-subcontractor-comunication-value">
+        <createTable tableName="subcontrator_comunication_values">
+            <column name="subcontractor_comunication_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="DATETIME"/>
+            <column name="progress" type="DECIMAL(19,2)"/>
+            <column name="idx" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+      <changeSet id="rename-table-customer_comunication-to-customer_communication" author="smontes">
+        <comment>Rename table customer_comunication to customer_communication</comment>
+        <renameTable oldTableName="customer_comunication" newTableName="customer_communication" />
+    </changeSet>
+
+    <changeSet id="rename-column-comunication_type-to-communication_type" author="smontes">
+        <comment>Rename column comunication_type to communication_type</comment>
+        <renameColumn tableName="customer_communication" oldColumnName="comunication_type"
+        newColumnName="communication_type" columnDataType="INTEGER" />
+    </changeSet>
+
+    <changeSet id="rename-column-comunication_date-to-communication_date" author="smontes">
+        <comment>Rename column comunication_date to communication_date</comment>
+        <renameColumn tableName="customer_communication" oldColumnName="comunication_date"
+        newColumnName="communication_date" columnDataType="DATETIME" />
+    </changeSet>
+
+    <changeSet id="rename-table-subcontractor_comunication" author="smontes">
+        <comment>Rename table subcontractor_comunication to subcontractor_communication</comment>
+        <renameTable oldTableName="subcontractor_comunication" newTableName="subcontractor_communication" />
+    </changeSet>
+
+    <changeSet id="rename-column-comunication_type-on-subcontractor-communication" author="smontes">
+        <comment>Rename column comunication_type to communication_type</comment>
+        <renameColumn tableName="subcontractor_communication" oldColumnName="comunication_type"
+        newColumnName="communication_type" columnDataType="INTEGER" />
+    </changeSet>
+
+    <changeSet id="rename-column-comunication_date-on-subcontractor-communication" author="smontes">
+        <comment>Rename column comunication_date to communication_date</comment>
+        <renameColumn tableName="subcontractor_communication" oldColumnName="comunication_date"
+        newColumnName="communication_date" columnDataType="DATETIME" />
+    </changeSet>
+
+    <changeSet id="rename-table-subcontractor_comunication_values" author="smontes">
+        <comment>Rename table subcontractor_comunication_values to subcontractor_communication_values</comment>
+        <renameTable oldTableName="subcontrator_comunication_values" newTableName="subcontractor_communication_values" />
+    </changeSet>
+
+    <changeSet id="rename-column-subcontractor_comunication_id" author="smontes">
+        <comment>Rename column subcontractor_comunication_id</comment>
+        <renameColumn tableName="subcontractor_communication_values" oldColumnName="subcontractor_comunication_id"
+        newColumnName="subcontractor_communication_id" columnDataType="BIGINT" />
+    </changeSet>
+
+	<changeSet author="smontes" id="creation-deadline-communication">
+        <createTable tableName="deadline_communication">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="deadline_comunication_pkey"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="save_date" type="DATETIME"/>
+            <column name="deliver_date" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-delivering-date-column-to-order-entity" author="smontes">
+        <comment>Add new delivering date column to order</comment>
+        <addColumn tableName="deadline_communication">
+            <column name="order_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+	<changeSet author="smontes" id="creation-subcontractor-deliver-date">
+        <createTable tableName="subcontractor_deliver_date">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="subcontrator_deliver_date_pkey"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="save_date" type="DATETIME"/>
+            <column name="subcontractor_deliver_date" type="DATETIME"/>
+            <column name="communication_date" type="DATETIME" />
+        </createTable>
+    </changeSet>
+
+	<changeSet author="smontes" id="add-subcontracted-task-data">
+		<comment>Add the column subcontracted_task_id to maintain the relation</comment>
+		<addColumn tableName="subcontractor_deliver_date">
+			<column name="subcontracted_task_data_id" type="BIGINT"/>
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="add-task_end_date_effort_duration-to-consolidated_value" author="mrego">
+        <comment>
+            taskEndDate attribute in class ConsolidatedValue has been changed to IntraDayDate.
+            It is needed to add some columns to store EffortDuration in ConsolidatedValue.
+        </comment>
+        <addColumn tableName="consolidated_value">
+            <column name="task_end_date_effort_duration" type="INTEGER" />
+        </addColumn>
+        <addDefaultValue tableName="consolidated_value"
+            columnName="task_end_date_effort_duration"
+            defaultValueNumeric="0" />
+    </changeSet>
+
+    <changeSet id="change-sum_of_hours_allocated-to-sum_of_assigned_effort" author="jaragunde">
+        <comment>Changing sum_of_hours_allocated to sum_of_assigned_effort</comment>
+        <renameColumn tableName="task_element"
+            oldColumnName="sum_of_hours_allocated"
+            newColumnName="sum_of_assigned_effort"
+            columnDataType="INTEGER" />
+    </changeSet>
+    <changeSet id="update-effort-values-in-sum_charged_effort" author="jaragunde">
+        <comment>Updating effort values (hours to seconds) in task_element table</comment>
+        <sql>
+            UPDATE task_element
+            SET sum_of_assigned_effort = sum_of_assigned_effort*3600
+        </sql>
+    </changeSet>
+
+    <changeSet id="add-new-column-check_new_version_enabled" author="mrego">
+        <comment>Add new column check_new_version_enabled with default value TRUE to configuration table</comment>
+        <addColumn tableName="configuration">
+            <column name="check_new_version_enabled" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration" columnName="check_new_version_enabled"
+           defaultValueBoolean="TRUE" />
+        <addNotNullConstraint tableName="configuration"
+           columnName="check_new_version_enabled"
+            defaultNullValue="TRUE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="add-new-column-allow_to_gather_usage_stats_enabled" author="mrego">
+        <comment>Add new column allow_to_gather_usage_stats_enabled with default value FALSE to configuration table</comment>
+        <addColumn tableName="configuration">
+            <column name="allow_to_gather_usage_stats_enabled" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration" columnName="allow_to_gather_usage_stats_enabled"
+           defaultValueBoolean="FALSE" />
+        <addNotNullConstraint tableName="configuration"
+           columnName="allow_to_gather_usage_stats_enabled"
+            defaultNullValue="FALSE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="change-column-description-in-order_element-to-text"
+        author="mrego" dbms="postgresql">
+        <comment>Change column description in order_element to TEXT</comment>
+        <modifyDataType tableName="order_element" columnName="description" newDataType="TEXT" />
+    </changeSet>
+
+    <changeSet id="change-column-description-in-order_element_template-to-text"
+        author="mrego" dbms="postgresql">
+        <comment>Change column description in order_element_template to TEXT</comment>
+        <modifyDataType tableName="order_element_template" columnName="description" newDataType="TEXT" />
+    </changeSet>
+
+	<changeSet author="smontes" id="database-creation-table-end-date-communication-to-customer">
+        <createTable tableName="end_date_communication_to_customer">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="end_date_communication_to_customer_pkey"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="save_date" type="DATETIME"/>
+            <column name="end_date" type="DATETIME"/>
+            <column name="communication_date" type="DATETIME"/>
+            <column name="order_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="subcontracted-date-id-column-to-end-date-communication" author="smontes">
+        <comment>Add subcontracted date id column to end date communication to customer</comment>
+        <addColumn tableName="end_date_communication_to_customer">
+            <column name="subcontracted_task_data_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="rename-table-end_date_comunication-to-customer" author="smontes">
+        <comment>Rename table to end_date_communication</comment>
+        <renameTable oldTableName="end_date_communication_to_customer" newTableName="end_date_communication" />
+    </changeSet>
+
+    <changeSet id="change-column-description-in-to-text-in-mysql"
+        author="mrego" dbms="mysql">
+        <comment>
+            Change column description in order_element and
+            order_element_template to TEXT in MySQL.
+            Because of using modifyDataType convert the column in LONGTEXT and
+            this is causing some problems with Hibernate mapping.
+        </comment>
+        <sql>ALTER TABLE order_element MODIFY description TEXT</sql>
+        <sql>ALTER TABLE order_element_template MODIFY description TEXT</sql>
+    </changeSet>
+
+    <changeSet id="add-budget-column-to-order_line" author="mrego">
+        <comment>add budget column to order_line</comment>
+        <addColumn tableName="order_line">
+            <column name="budget" type="DECIMAL(19,2)" />
+        </addColumn>
+        <addNotNullConstraint tableName="order_line"
+            columnName="budget" defaultNullValue="0"
+            columnDataType="DECIMAL(19,2)" />
+        <addDefaultValue tableName="order_line"
+            columnName="budget" defaultValueNumeric="0" />
+    </changeSet>
+
+    <changeSet id="add-budget-column-to-order_line_template" author="mrego">
+        <comment>add budget column to order_line_template</comment>
+        <addColumn tableName="order_line_template">
+            <column name="budget" type="DECIMAL(19,2)" />
+        </addColumn>
+        <addNotNullConstraint tableName="order_line_template"
+            columnName="budget" defaultNullValue="0"
+            columnDataType="DECIMAL(19,2)" />
+        <addDefaultValue tableName="order_line_template"
+            columnName="budget" defaultValueNumeric="0" />
+    </changeSet>
+
+    <changeSet id="change-mapping-order-element-and-sum-charged-effort-postgresql"
+        author="mrego" dbms="postgresql">
+        <comment>Change mapping between OrderElement and SumChargedEffort in MySQL</comment>
+
+        <addColumn tableName="sum_charged_effort">
+            <column name="order_element" type="BIGINT" />
+        </addColumn>
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION chageMappingBetweenOrderElementAndSumChargedEffort() RETURNS VOID AS $$
+            DECLARE
+                sce RECORD;
+            BEGIN
+                FOR sce IN SELECT sum_charged_effort_id AS id FROM order_element
+                LOOP
+                    EXECUTE 'UPDATE sum_charged_effort '
+                        || 'SET order_element '
+                        || ' = (SELECT id FROM order_element '
+                            || 'WHERE sum_charged_effort_id '
+                            || ' = '
+                            || quote_literal(sce.id)
+                            || ') '
+                        || 'WHERE id '
+                        || ' = '
+                        || quote_literal(sce.id);
+                END LOOP;
+            END;
+            $$ LANGUAGE plpgsql;
+        </createProcedure>
+        <sql>SELECT chageMappingBetweenOrderElementAndSumChargedEffort()</sql>
+        <addForeignKeyConstraint constraintName="sum_charged_effort_order_element_fkey"
+            baseTableName="sum_charged_effort" baseColumnNames="order_element"
+            referencedTableName="order_element" referencedColumnNames="id" />
+        <dropColumn tableName="order_element" columnName="sum_charged_effort_id"/>
+    </changeSet>
+
+    <changeSet id="change-mapping-order-element-and-sum-charged-effort-mysql"
+        author="mrego" dbms="mysql">
+        <comment>Change mapping between OrderElement and SumChargedEffort in PostgreSQL</comment>
+
+        <addColumn tableName="sum_charged_effort">
+            <column name="order_element" type="BIGINT" />
+        </addColumn>
+        <sql>DROP PROCEDURE IF EXISTS chageMappingBetweenOrderElementAndSumChargedEffort</sql>
+        <sql splitStatements="false">
+            CREATE PROCEDURE chageMappingBetweenOrderElementAndSumChargedEffort()
+            BEGIN
+                DECLARE done INT DEFAULT FALSE;
+                DECLARE sce_id INT;
+                DECLARE cursor_sce_ids CURSOR FOR SELECT sum_charged_effort_id AS id FROM order_element;
+                DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+                OPEN cursor_sce_ids;
+
+                ids_loop: LOOP
+                    FETCH cursor_sce_ids INTO sce_id;
+                    IF done THEN
+                        LEAVE ids_loop;
+                    END IF;
+                    UPDATE sum_charged_effort SET order_element = (SELECT id FROM order_element WHERE sum_charged_effort_id = sce_id) WHERE id = sce_id;
+                END LOOP;
+
+                CLOSE cursor_sce_ids;
+            END;
+        </sql>
+        <sql>CALL chageMappingBetweenOrderElementAndSumChargedEffort()</sql>
+        <addForeignKeyConstraint constraintName="sum_charged_effort_order_element_fkey"
+            baseTableName="sum_charged_effort" baseColumnNames="order_element"
+            referencedTableName="order_element" referencedColumnNames="id" />
+        <dropForeignKeyConstraint baseTableName="order_element" constraintName="sum_charged_effort_id_fkey"/>
+        <dropColumn tableName="order_element" columnName="sum_charged_effort_id"/>
+    </changeSet>
+
+    <changeSet author="smontes" id="creation-table-expense-sheet">
+        <createTable tableName="expense_sheet">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="expense_sheet_pkey"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code_autogenerated" type="BOOLEAN"/>
+            <column name="first_expense" type="DATETIME"/>
+            <column name="last_expense" type="DATETIME"/>
+            <column name="total" type="DECIMAL(19,2)"/>
+            <column name="description" type="TEXT"/>
+            <column name="last_expense_sheet_line_sequence_code" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="change-column-description-in-expense_sheet_to-text-in-mysql"
+        author="mrego" dbms="mysql">
+        <comment>
+            Change column description in expense_sheet to TEXT in MySQL.
+            Because of using modifyDataType convert the column in LONGTEXT and
+            this is causing some problems with Hibernate mapping.
+        </comment>
+        <sql>ALTER TABLE expense_sheet MODIFY description TEXT</sql>
+    </changeSet>
+
+    <changeSet author="smontes" id="creation-table-expense-sheet-line">
+        <createTable tableName="expense_sheet_line">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="expense_sheet_line_pkey"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="value" type="DECIMAL(19,2)"/>
+            <column name="concept" type="VARCHAR(255)"/>
+            <column name="date" type="DATETIME"/>
+            <column name="order_element_id" type="BIGINT"/>
+            <column name="resource_id" type="BIGINT"/>
+            <column name="expense_sheet_id" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="expense_sheet_line_order_element_fkey"
+            baseTableName="expense_sheet_line" baseColumnNames="order_element_id"
+            referencedTableName="order_element" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="expense_sheet_line_resource_fkey"
+            baseTableName="expense_sheet_line" baseColumnNames="resource_id"
+            referencedTableName="resource" referencedColumnNames="id" />
+        <addForeignKeyConstraint constraintName="expense_sheet_line_expense_sheet_fkey"
+            baseTableName="expense_sheet_line" baseColumnNames="expense_sheet_id"
+            referencedTableName="expense_sheet" referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="add-new-column-generate-code-for-expense-sheets" author="smontes">
+        <comment>Add new column to generate the code for expense sheet in configuration table</comment>
+        <addColumn tableName="configuration">
+            <column name="generate_code_for_expense_sheets" type="BOOLEAN"/>
+        </addColumn>
+        <addDefaultValue tableName="configuration" columnName="generate_code_for_expense_sheets"
+           defaultValueBoolean="TRUE" />
+        <addNotNullConstraint tableName="configuration"
+           columnName="generate_code_for_expense_sheets"
+            defaultNullValue="TRUE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="modify-columns-type-in-expense-sheet-to-date" author="smontes">
+        <comment>modify columns type in expense sheet to date</comment>
+        <modifyDataType tableName="expense_sheet" columnName="first_expense" newDataType="DATE"/>
+        <modifyDataType tableName="expense_sheet" columnName="last_expense" newDataType="DATE"/>
+    </changeSet>
+
+    <changeSet id="modify-columns-type-in-expense-sheet-line-to-date" author="smontes">
+        <comment>modify columns type in expense sheet line to date</comment>
+        <modifyDataType tableName="expense_sheet_line" columnName="date" newDataType="DATE"/>
+    </changeSet>
+
+	<changeSet author="smontes" id="create3-table-sum-expenses">
+	    <comment>creation table sum_expenses</comment>
+        <createTable tableName="sum_expenses">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sum_expenses_pkey"/>
+            </column>
+            <column name="version" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_element_id" type="BIGINT"/>
+            <column name="total_direct_expenses" type="DECIMAL(19,2)"/>
+            <column name="total_indirect_expenses" type="DECIMAL(19,2)"/>
+        </createTable>
+        <addForeignKeyConstraint constraintName="sum_expenses_order_element_fkey"
+            baseTableName="sum_expenses" baseColumnNames="order_element_id"
+            referencedTableName="order_element" referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="add-new-columns-for-currency-in-configuration" author="mrego">
+        <comment>Add new columns for currency in configuration table</comment>
+        <addColumn tableName="configuration">
+            <column name="currency_code" type="VARCHAR(255)" />
+        </addColumn>
+        <addDefaultValue tableName="configuration" columnName="currency_code"
+            defaultValue="EUR" />
+        <addNotNullConstraint tableName="configuration"
+            columnName="currency_code"
+            defaultNullValue="EUR"
+            columnDataType="VARCHAR(255)" />
+        <addColumn tableName="configuration">
+            <column name="currency_symbol" type="VARCHAR(255)" />
+        </addColumn>
+        <addDefaultValue tableName="configuration" columnName="currency_symbol"
+            defaultValue="€" />
+        <addNotNullConstraint tableName="configuration"
+            columnName="currency_symbol"
+            defaultNullValue="€"
+            columnDataType="VARCHAR(255)" />
+    </changeSet>
+
+    <changeSet id="remove-code-from-order_element_template" author="jaragunde">
+        <comment>Remove column code in order_element_template table</comment>
+        <dropColumn tableName="order_element_template" columnName="code" />
+    </changeSet>
+
+    <changeSet id="add-relationship-between-worker-and-user" author="mrego">
+        <comment>Add column and constraints needed for relationship between worker and user</comment>
+        <addColumn tableName="worker">
+            <column name="user_id" type="BIGINT" />
+        </addColumn>
+        <addUniqueConstraint tableName="worker" columnNames="user_id"
+            constraintName="worker_user_id_key" />
+        <addForeignKeyConstraint constraintName="worker_user_fkey"
+            baseTableName="worker" baseColumnNames="user_id"
+            referencedTableName="user_table" referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="add-monthly_timesheets_type_of_work_hours-to-configuration" author="mrego">
+        <comment>
+            Add new column monthly_timesheets_type_of_work_hours to
+            configuration table.
+        </comment>
+        <addColumn tableName="configuration">
+            <column name="monthly_timesheets_type_of_work_hours" type="BIGINT" />
+        </addColumn>
+        <addForeignKeyConstraint constraintName="configuration_type_of_work_hours_fkey"
+            baseTableName="configuration" baseColumnNames="monthly_timesheets_type_of_work_hours"
+            referencedTableName="type_of_work_hours" referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="add-new-column-personal-to-expense_sheet-table" author="mrego">
+        <comment>
+            Add new column personal with default value FALSE to expense_sheet
+            table
+        </comment>
+        <addColumn tableName="expense_sheet">
+            <column name="personal" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="expense_sheet" columnName="personal"
+            defaultValueBoolean="FALSE" />
+        <addNotNullConstraint tableName="expense_sheet" columnName="personal"
+            defaultNullValue="FALSE" columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="add-new-column-changed_default_wssubcontracting_password" author="mrego">
+        <comment>
+            Add new column changed_default_wssubcontracting_password with
+            default value FALSE to configuration table
+        </comment>
+        <addColumn tableName="configuration">
+            <column name="changed_default_wssubcontracting_password"
+                type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration"
+            columnName="changed_default_wssubcontracting_password"
+            defaultValueBoolean="FALSE" />
+        <addNotNullConstraint tableName="configuration"
+            columnName="changed_default_wssubcontracting_password"
+            defaultNullValue="FALSE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="rename-column-elt-in-roles_table-to-role" author="mrego">
+        <comment>Rename column elt in roles_table to role</comment>
+        <renameColumn tableName="roles_table" oldColumnName="elt"
+            newColumnName="role" columnDataType="VARCHAR(255)" />
+    </changeSet>
+
+    <changeSet id="rename-roles-in-roles_table" author="mrego">
+        <comment>Rename roles in roles_table</comment>
+        <update tableName="roles_table">
+            <column name="role" value="ROLE_SUPERUSER"/>
+            <where>role='ROLE_ADMINISTRATION'</where>
+        </update>
+        <update tableName="roles_table">
+            <column name="role" value="ROLE_READ_ALL_PROJECTS"/>
+            <where>role='ROLE_READ_ALL_ORDERS'</where>
+        </update>
+        <update tableName="roles_table">
+            <column name="role" value="ROLE_EDIT_ALL_PROJECTS"/>
+            <where>role='ROLE_EDIT_ALL_ORDERS'</where>
+        </update>
+        <update tableName="roles_table">
+            <column name="role" value="ROLE_CREATE_PROJECTS"/>
+            <where>role='ROLE_CREATE_ORDER'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="rename-column-elt-in-profile_roles-to-role" author="mrego">
+        <comment>Rename column elt in profile_roles to role</comment>
+        <renameColumn tableName="profile_roles" oldColumnName="elt"
+            newColumnName="role" columnDataType="VARCHAR(255)" />
+    </changeSet>
+
+    <changeSet id="rename-roles-in-profile_roles" author="mrego">
+        <comment>Rename roles in profile_roles</comment>
+        <update tableName="profile_roles">
+            <column name="role" value="ROLE_SUPERUSER"/>
+            <where>role='ROLE_ADMINISTRATION'</where>
+        </update>
+        <update tableName="profile_roles">
+            <column name="role" value="ROLE_READ_ALL_PROJECTS"/>
+            <where>role='ROLE_READ_ALL_ORDERS'</where>
+        </update>
+        <update tableName="profile_roles">
+            <column name="role" value="ROLE_EDIT_ALL_PROJECTS"/>
+            <where>role='ROLE_EDIT_ALL_ORDERS'</where>
+        </update>
+        <update tableName="profile_roles">
+            <column name="role" value="ROLE_CREATE_PROJECTS"/>
+            <where>role='ROLE_CREATE_ORDER'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="drop-column-changed_default_user_password-in-configuration"
+        author="mrego">
+        <comment>Drop column code in configuration table</comment>
+        <dropColumn tableName="configuration"
+            columnName="changed_default_user_password" />
+    </changeSet>
+
+    <changeSet id="add-new-column-changed_default_manager_password" author="mrego">
+        <comment>
+            Add new column changed_default_manager_password with
+            default value FALSE to configuration table
+        </comment>
+        <addColumn tableName="configuration">
+            <column name="changed_default_manager_password"
+                type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration"
+            columnName="changed_default_manager_password"
+            defaultValueBoolean="FALSE" />
+        <addNotNullConstraint tableName="configuration"
+            columnName="changed_default_manager_password"
+            defaultNullValue="FALSE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="add-new-column-changed_default_hresources_password" author="mrego">
+        <comment>
+            Add new column changed_default_hresources_password with
+            default value FALSE to configuration table
+        </comment>
+        <addColumn tableName="configuration">
+            <column name="changed_default_hresources_password"
+                type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration"
+            columnName="changed_default_hresources_password"
+            defaultValueBoolean="FALSE" />
+        <addNotNullConstraint tableName="configuration"
+            columnName="changed_default_hresources_password"
+            defaultNullValue="FALSE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="add-new-column-changed_default_outsourcing_password" author="mrego">
+        <comment>
+            Add new column changed_default_outsourcing_password with
+            default value FALSE to configuration table
+        </comment>
+        <addColumn tableName="configuration">
+            <column name="changed_default_outsourcing_password"
+                type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration"
+            columnName="changed_default_outsourcing_password"
+            defaultValueBoolean="FALSE" />
+        <addNotNullConstraint tableName="configuration"
+            columnName="changed_default_outsourcing_password"
+            defaultNullValue="FALSE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="add-new-column-changed_default_reports_password" author="mrego">
+        <comment>
+            Add new column changed_default_reports_password with
+            default value FALSE to configuration table
+        </comment>
+        <addColumn tableName="configuration">
+            <column name="changed_default_reports_password"
+                type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration"
+            columnName="changed_default_reports_password"
+            defaultValueBoolean="FALSE" />
+        <addNotNullConstraint tableName="configuration"
+            columnName="changed_default_reports_password"
+            defaultNullValue="FALSE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+</databaseChangeLog>

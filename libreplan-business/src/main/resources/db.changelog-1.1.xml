@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet id="add-new-column-ldap-host" author="calvarinop">
+        <comment>Add new column to store ldap host</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_host" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-port" author="calvarinop">
+        <comment>Add new column to store ldap port</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_port" type="VARCHAR(5)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-base" author="calvarinop">
+        <comment>Add new column to store ldap base</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_base" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-userdn" author="calvarinop">
+        <comment>Add new column to store ldap userdn</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_userdn" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-password" author="calvarinop">
+        <comment>Add new column to store ldap password</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_password" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-userid" author="calvarinop">
+        <comment>Add new column to store ldap userid</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_userid" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-save-password-db"
+        author="calvarinop">
+        <comment>Add new column to store ldap passwords in database</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_save_password_db" type="BOOLEAN" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-auth-enabled" author="calvarinop">
+        <comment>Add new column to store ldap authentication enabled</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_auth_enabled" type="BOOLEAN" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-navalplan-user"
+        author="idiazt">
+        <comment>Add new column to store if it is a navalplan user</comment>
+        <addColumn tableName="user_table">
+            <column name="navalplan_user" type="BOOLEAN" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="delete-constraint-not-null-user-password"
+        author="idiazt">
+        <comment>Delete constraint not null for user password</comment>
+        <dropNotNullConstraint tableName="user_table"
+            columnName="password" columnDataType="VARCHAR(255)" />
+    </changeSet>
+
+    <changeSet id="set-default-value-navalplan-user" author="idiazt">
+        <addDefaultValue tableName="user_table"
+           columnName="navalplan_user"
+           defaultValueBoolean="TRUE" />
+       <addNotNullConstraint tableName="user_table"
+           columnName="navalplan_user"
+           defaultNullValue="TRUE"
+           columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="set-default-value-ldap-save-password-db" author="idiazt">
+        <addDefaultValue tableName="configuration"
+           columnName="ldap_save_password_db"
+           defaultValueBoolean="TRUE" />
+       <addNotNullConstraint tableName="configuration"
+           columnName="ldap_save_password_db"
+           defaultNullValue="TRUE"
+           columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="set-default-value-ldap-auth-enabled" author="idiazt">
+        <addDefaultValue tableName="configuration"
+           columnName="ldap_auth_enabled"
+           defaultValueBoolean="FALSE" />
+       <addNotNullConstraint tableName="configuration"
+           columnName="ldap_auth_enabled"
+           defaultNullValue="FALSE"
+           columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-save-roles-db" author="calvarinop">
+        <comment>Add new column to store ldap roles in database</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_save_roles_db" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration"
+           columnName="ldap_save_roles_db"
+           defaultValueBoolean="FALSE" />
+       <addNotNullConstraint tableName="configuration"
+           columnName="ldap_save_roles_db"
+           defaultNullValue="FALSE"
+           columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="create-new-table-matching-roles" author="calvarinop">
+        <comment>Add table to store the matching between LDAP roles and LibrePlan roles</comment>
+        <createTable tableName="configuration_roles_ldap">
+            <column name="role_libreplan" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="role_ldap" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="id_configuration" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_matching_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="id_configuration" baseTableName="configuration_roles_ldap" constraintName="id_configuration_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="configuration" referencesUniqueColumn="false"/>
+
+        <comment>Add new column to store ldap group path</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_group_path" type="VARCHAR(255)" />
+        </addColumn>
+
+        <comment>Add new column to store ldap role property</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_role_property" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="add-new-column-ldap-search-query" author="idiazt">
+        <comment>Add new column to store ldap role search query</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_search_query" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-new-column-enabled-autocomplete-login" author="smontes">
+        <comment>Add new column enabled_autocomplete_login with default value TRUE to configuration table</comment>
+        <addColumn tableName="configuration">
+            <column name="enabled_autocomplete_login" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration" columnName="enabled_autocomplete_login"
+           defaultValueBoolean="TRUE" />
+        <addNotNullConstraint tableName="configuration"
+           columnName="enabled_autocomplete_login"
+            defaultNullValue="TRUE"
+            columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="add-application-language" author="calvarinop">
+        <comment>Add new column to store the language of application for this user</comment>
+        <addColumn tableName="user_table">
+            <column name="application_language" type="INTEGER" defaultValue="0"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="move-columns-from-configuration-table" author="calvarinop">
+        <comment>Move columns from configuration table to user table</comment>
+
+        <addColumn tableName="user_table">
+            <column name="expand_company_planning_view_charts" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="user_table" columnName="expand_company_planning_view_charts" defaultValueBoolean="FALSE" />
+        <addNotNullConstraint tableName="user_table" columnName="expand_company_planning_view_charts" defaultNullValue="FALSE" columnDataType="BOOLEAN" />
+
+        <addColumn tableName="user_table">
+            <column name="expand_order_planning_view_charts" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="user_table" columnName="expand_order_planning_view_charts" defaultValueBoolean="TRUE" />
+        <addNotNullConstraint tableName="user_table" columnName="expand_order_planning_view_charts" defaultNullValue="TRUE" columnDataType="BOOLEAN" />
+
+        <addColumn tableName="user_table">
+            <column name="expand_resource_load_view_charts" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="user_table" columnName="expand_resource_load_view_charts" defaultValueBoolean="TRUE" />
+        <addNotNullConstraint tableName="user_table" columnName="expand_resource_load_view_charts" defaultNullValue="TRUE" columnDataType="BOOLEAN" />
+
+        <dropColumn tableName="configuration" columnName="expand_company_planning_view_charts"/>
+        <dropColumn tableName="configuration" columnName="expand_order_planning_view_charts"/>
+        <dropColumn tableName="configuration" columnName="expand_resource_load_view_charts"/>
+    </changeSet>
+
+    <changeSet id="add-new-fields" author="calvarinop">
+        <comment>Add new column to store the first and last name for this user</comment>
+        <addColumn tableName="user_table">
+            <column name="first_name" type="VARCHAR(255)"/>
+        </addColumn>
+        <addColumn tableName="user_table">
+            <column name="last_name" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="remove-configuration_roles_ldap" author="mrego">
+        <comment>Remove column configuration_roles_ldap in role_matching_id</comment>
+        <dropColumn tableName="configuration_roles_ldap" columnName="role_matching_id" />
+    </changeSet>
+
+    <changeSet id="add-column-progress_all_by_num_hours-in-planning_data" author="mrego">
+        <comment>Add column progress_all_by_num_hours in planning_data</comment>
+        <addColumn tableName="planning_data">
+            <column name="progress_all_by_num_hours" type="numeric(19,6)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="update-color-in-calendar_exception_type-to-default" author="mrego">
+        <comment>Update color in calendar_exception_type to DEFAULT</comment>
+        <update tableName="calendar_exception_type">
+            <column name="color" value="DEFAULT" />
+        </update>
+    </changeSet>
+
+    <changeSet author="mrego" id="create-table-manual_function">
+        <createTable tableName="manual_function">
+            <column name="assignment_function_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="manual_function_pkey" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="assignment_function_id"
+            baseTableName="manual_function"
+            constraintName="mnual_function_assignment_function_fkey"
+            deferrable="false"
+            initiallyDeferred="false"
+            onDelete="NO ACTION"
+            onUpdate="NO ACTION"
+            referencedColumnNames="id"
+            referencedTableName="assignment_function"
+            referencesUniqueColumn="false" />
+    </changeSet>
+
+    <changeSet id="change-numhours-to-effort-in-work-report-lines" author="idiazt">
+        <comment>Changing work_report_line numHours to effort</comment>
+        <renameColumn tableName="work_report_line" oldColumnName="num_hours"
+          newColumnName="effort" columnDataType="INTEGER" />
+    </changeSet>
+
+    <changeSet id="update-numhours-values-to-effort-values" author="idiazt">
+        <comment>Updating numHours to effort (hours to seconds)</comment>
+        <sql>
+            UPDATE work_report_line
+            SET effort = effort*3600
+        </sql>
+    </changeSet>
+
+    <changeSet id="change-sum_charged_hours-to-sum_charged_effort" author="mrego">
+        <comment>Changing sum_charged_hours to sum_charged_effort</comment>
+        <renameTable oldTableName="sum_charged_hours"
+            newTableName="sum_charged_effort" />
+        <renameColumn tableName="sum_charged_effort"
+            oldColumnName="direct_charged_hours"
+            newColumnName="direct_charged_effort"
+            columnDataType="INTEGER" />
+        <renameColumn tableName="sum_charged_effort"
+            oldColumnName="indirect_charged_hours"
+            newColumnName="indirect_charged_effort"
+            columnDataType="INTEGER" />
+    </changeSet>
+
+    <changeSet id="update-effort-values-in-sum_charged_effort" author="mrego">
+        <comment>Updating effort values (hours to seconds) in sum_charged_effort table</comment>
+        <sql>
+            UPDATE sum_charged_effort
+            SET direct_charged_effort = direct_charged_effort*3600
+        </sql>
+        <sql>
+            UPDATE sum_charged_effort
+            SET indirect_charged_effort = indirect_charged_effort*3600
+        </sql>
+    </changeSet>
+
+    <changeSet id="drop-foreign-key-sum_charged_hours_id-in-order_element" author="dmel">
+        <dropForeignKeyConstraint baseTableName="order_element"
+            constraintName="fk92271f0b7ec17fa6" />
+    </changeSet>
+
+    <changeSet id="rename-sum_charged_hours_id-to-sum_charged_effort_id" author="mrego">
+        <comment>Rename sum_charged_hours_id to sum_charged_effort_id in order_element</comment>
+        <renameColumn tableName="order_element"
+            oldColumnName="sum_charged_hours_id"
+            newColumnName="sum_charged_effort_id"
+            columnDataType="BIGINT" />
+    </changeSet>
+
+    <changeSet id="add-foreign-key-sum_charged_effort_id-in-order_element" author="dmel">
+        <addForeignKeyConstraint baseColumnNames="sum_charged_effort_id" baseTableName="order_element" constraintName="sum_charged_effort_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="sum_charged_effort" referencesUniqueColumn="false"/>
+    </changeSet>
+
+    <changeSet id="drop-column-date-in-stretches-table" author="mrego">
+        <dropColumn tableName="stretches" columnName="date" />
+    </changeSet>
+
+    <changeSet id="add-version-to-planning-data" author="ogonzalez">
+        <addColumn tableName="planning_data">
+           <column name="version" type="BIGINT" defaultValue="0">
+            <constraints nullable="false"/>
+           </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="change-navalplan_user-to-libreplan_user-in-user_table" author="mrego">
+        <comment>Changing navalplan_user to libreplan_user in user_table</comment>
+        <renameColumn tableName="user_table" oldColumnName="navalplan_user"
+          newColumnName="libreplan_user" columnDataType="BOOLEAN" />
+    </changeSet>
+
+    <changeSet id="add-new-column-ldap-role-strategy" author="idiazt">
+        <comment>Add new column to store ldap role strategy</comment>
+        <addColumn tableName="configuration">
+            <column name="ldap_group_strategy" type="BOOLEAN" />
+        </addColumn>
+        <addDefaultValue tableName="configuration"
+           columnName="ldap_group_strategy"
+           defaultValueBoolean="TRUE" />
+       <addNotNullConstraint tableName="configuration"
+           columnName="ldap_group_strategy"
+           defaultNullValue="TRUE"
+           columnDataType="BOOLEAN" />
+    </changeSet>
+
+</databaseChangeLog>

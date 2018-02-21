@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<resource-list xmlns="http://rest.ws.libreplan.org">
+
+    <!-- [It assumes existence of "TestLocationGroupCriterion" and
+         "TestCostCategory"] OK. -->
+    <machine code="machineA" name="name" description="desc">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="machineA-s1"
+                criterion-type-name="LOCATION_GROUP"
+                criterion-name="TestLocationGroupCriterion"
+                start-date="2009-01-01"
+                end-date=""/>
+        </criterion-satisfaction-list>
+        <resources-cost-category-assignment-list>
+            <resources-cost-category-assignment
+                code="machineA-a1"
+                cost-category-name="TestCostCategory"
+                start-date="2001-01-01"/>
+            <resources-cost-category-assignment
+                code="machineA-a2"
+                cost-category-name="TestCostCategory"
+                start-date="2000-01-01"
+                end-date="2000-04-01"/>
+        </resources-cost-category-assignment-list>
+    </machine>
+
+    <!-- [It assumes existence of "TestCalendar" and "TestCostCategory"] OK -->
+    <worker code="workerA" first-name="workerA" surname="surname" nif="nif"
+        calendar-name="TestCalendar">
+        <criterion-satisfaction-list>
+            <criterion-satisfaction
+                code="workerA-s1"
+                criterion-type-name="WORK_RELATIONSHIP"
+                criterion-name="hiredResourceWorkingRelationship"
+                start-date="2009-01-01"
+                end-date=""/>
+            <criterion-satisfaction
+                code="workerA-s2"
+                criterion-type-name="LEAVE"
+                criterion-name="paternityLeave"
+                start-date="2009-12-24"
+                end-date="2009-12-25"/>
+        </criterion-satisfaction-list>
+        <resources-cost-category-assignment-list>
+            <resources-cost-category-assignment
+                code="workerA-a1"
+                cost-category-name="TestCostCategory"
+                start-date="2001-01-01"/>
+            <resources-cost-category-assignment
+                code="workerA-a2"
+                cost-category-name="TestCostCategory"
+                start-date="2000-01-01"
+                end-date="2000-04-01"/>
+        </resources-cost-category-assignment-list>
+    </worker>
+
+</resource-list>

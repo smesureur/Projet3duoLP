@@ -1,0 +1,225 @@
+body {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.menuup {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    background-image: url(../img/pestana1.gif);
+    font-size: 11px;
+    color: #0081C2;
+    display: block;
+    padding-top: 10px;
+    padding-left: 6px;
+    width: 125px;
+    font-weight: bold;
+    background-repeat: no-repeat;
+    background-position: -4px 0px;
+    padding-bottom: 5px;
+}
+
+a.menuup:hover {
+    background-image: url(../img/pestana_sobre.gif);
+}
+
+.menuup_desactivado {
+        font-family: Tahoma, Arial, Helvetica, sans-serif;
+        text-decoration: none;
+        font-size: 11px;
+        color: #77B6D0;
+        display: block;
+        padding-top: 10px;
+        padding-left: 6px;
+        width: 125px;
+        background-repeat: no-repeat;
+        background-position: -4px 4px;
+        padding-bottom: 5px;
+        background-image: url(../img/pestana_desactivada.gif);
+}
+
+.sub_menu {
+    font-family: Tahoma, Arial, Helvetica, sans-serif, Tahoma;
+    font-size: 11px;
+    color: #EDF2F7;
+    text-decoration: none;
+    display: block;
+    line-height: 22px;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+a.sub_menu:hover {
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.sub_menu_activo {
+        font-family: Tahoma, Arial, Helvetica, sans-serif, Tahoma;
+        font-size: 11px;
+        color: #2A83B4;
+        background-color: #CBDBEB;
+        text-decoration: none;
+        display: block;
+        line-height: 16px;
+        padding-right: 3px;
+        padding-left: 3px;
+        text-decoration: none;
+        background-image: url(../img/pest_sub1.gif);
+        background-repeat:  no-repeat;
+        background-position: right top;
+}
+
+.sub_menu_desactivado {
+        font-family: Tahoma, Arial, Helvetica, sans-serif, Tahoma;
+        font-size: 11px;
+        color: #ABB8CD;
+        text-decoration: none;
+        display: block;
+        line-height: 22px;
+        padding-right: 3px;
+        padding-left: 3px;
+        font-style: italic;
+}
+
+.menuup_activa {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    font-size: 11px;
+    color: #FFFFFF;
+    display: block;
+    background-image: url(../img/pestana_activa.gif);
+    width: 125px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 6px;
+    font-weight: bold;
+    background-repeat: no-repeat;
+    background-position: -4px 0px;
+}
+
+.usuario {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    text-decoration: none;
+    text-align: right;
+    padding-right: 15px;
+    color: #3195D7;
+    font-weight: bold;
+    cursor: default;
+}
+
+.cerrar_sesion {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    text-decoration: none;
+    text-align: right;
+    padding-right: 15px;
+    color: #009900;
+    display: block;
+    font-weight: bold;
+}
+
+.cerrar_sesion:hover {
+    text-decoration: underline;
+}
+
+.ruta {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #3B89B7;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+.ruta span, .ruta a {
+    font-weight:bold;
+}
+
+.ruta tr {
+    vertical-align: middle;
+}
+
+.fondo_cabecera {
+    background-image: url(../img/cabecera.jpg);
+    background-position: right top;
+    background-repeat: no-repeat;
+}
+
+.migas_linea {
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-top-color: #DCEEF9;
+    border-bottom-color: #DCEEF9;
+}
+
+.ruta div {
+    padding-bottom:3px;
+}
+
+.mainmenu {
+    margin-top:10px;
+}
+
+.help-link {
+    width: 110px;
+}
+
+.help-link a {
+    font-family: Verdana,Arial,Helvetica,sans-serif,Tahoma;
+    font-size:11px;
+    color: #0068B1;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.help-link a:hover span {
+    text-decoration: underline;
+}
+
+.help-link a span {
+    position: relative;
+    top:-6px;
+}
+
+.user-area {
+    position: absolute;
+    top:14px;
+    right:0;
+    z-index:2;
+}
+
+.footer-messages-area * {
+  color: #CC5013;
+  font-size: 11px;
+}
+
+.footer-messages-area a {
+  text-decoration: none;
+}
+
+.footer-messages-area .command {
+  font-weight: bold;
+}
+
+.footer-messages-area a:hover {
+  text-decoration: underline;
+}
+
+.logo-area img {
+	max-width: 300px;
+	max-height: 65px;
+}
+
+.mainmenu :focus {
+    color:#FFF !important;
+    text-decoration: underline !important;
+}
+
+a:focus {
+    text-decoration: underline !important;
+}

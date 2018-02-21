@@ -1,0 +1,182 @@
+/*
+ * This file is part of LibrePlan
+ *
+ * Copyright (C) 2011-2012 Igalia, S.L.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* Included tests
+ *
+ * 1 - Create a work report without any work report model (it should be a failure)
+ * 2 - Create a Timesheet from a lineal work report model
+ *   2.1 - Create a lineal work report model
+ *   2.2 - Create a work report
+ * 3 - Create a Timesheet from a heading work report model
+ *   3.1 - Create a heading work report model
+ *   3.2 - Try to create a work report from heading model without task (it should be a failure)
+ * 4 - Edit the work report including a line
+ *   4.1 - Create a machine
+ *   4.2 - Create a Work hour
+ *   4.3 - Create a project
+ *   4.4 - Complete the form and check the fields
+ * 5 - Delete all the work reports
+ * 6 - Delete all required elements
+ *
+ */
+
+_include("../common_functions.sah");
+
+function workReportCreateLineModel($modelName){
+    workReportModelLineCreate($modelName);
+    _click(_link("Timesheets"));
+    _setSelected(_select(0, _near(_span("Select template:"))), $modelName);
+    _click(_cell("New timesheet"));
+    _click(_cell("Save"));
+    workReportAcctionValidation("saved");
+    _log("Create a new work report from a model type line", "custom1");
+}
+
+function workReportModelLineCreate($name){
+    commonCreate("Timesheets Templates");
+    workReportModelLineForm($name);
+    commonSaveValidation("Timesheets Template", $name);
+    _log("Create a new Timesheets Template", "custom1");
+}
+
+function workReportModelLineForm($name){
+    _setValue(_textbox(0, _near(_span("Name"))), $name);
+    _removeFocus(_textbox(0, _near(_div("Name"))));
+    _click(_cell("Add New Complementary Field"));
+    _setValue(_textbox(0, _near(_span("Complementary text fields"))), $name);
+    _setValue(_textbox(1, _near(_span("Complementary text fields"))), "12");
+    _click(_cell("Save"));
+}
+
+function workReportCreateHeadingModel($modelName){
+    workReportModelHeadingCreate($modelName);
+    _click(_link("Timesheets"));
+    _setSelected(_select(0, _near(_span("Select template:"))), $modelName);
+    _click(_cell("New timesheet"));
+    _click(_cell("Save"));
+    workReportHeadingCodeValidation();
+    _log("Do not allow create a new work report from a model type heading without task", "custom1");
+}
+
+function workReportModelHeadingCreate($name){
+    commonCreate("Timesheets Templates");
+    workReportModelHeadingForm($name);
+    commonSaveValidation("Timesheets Template", $name);
+    _log("Create a new Timesheets Template", "custom1");
+}
+
+function workReportModelHeadingForm($name){
+    _setValue(_textbox(0, _near(_span("Name"))), $name);
+    _removeFocus(_textbox(0, _near(_div("Name"))));
+    _setSelected(_select(0, _near(_span("Task"))),"heading");
+    _click(_cell("Add New Complementary Field"));
+    _setValue(_textbox(0, _near(_span("Complementary text fields"))), $name);
+    _setValue(_textbox(1, _near(_span("Complementary text fields"))), "12");
+    _click(_cell("Save"));
+}
+
+function workReportEdit($name){
+    workReportLinesCreateRequiredElements();
+    workReportEditForm($name);
+}
+
+function workReportEditForm($name){
+    _click(_link("Timesheets"));
+    commonEdit($name, 5);
+    _click(_cell("Add new row"));
+    _click(_cell("Save"));
+    workReportResourceValidation();
+    _setValue(_textbox(2, _near(_span("Timesheet lines"))), $machineName);
+    _click(_cell("Save"));
+    workReportTaskValidation();
+    _click(_italic(0, _near(_textbox(3, _near(_span("Timesheet lines"))))));
+    _click(_div($projectName+"[2]", _parentTable(_div("Project code[1]"))));
+    _click(_cell("Save"));
+    workReportHourValidation();
+    _setValue(_textbox("z-textbox z-textbox-text-invalid"), "8");
+    _click(_cell("Save"));
+}
+
+function workReportLinesCreateRequiredElements(){
+    commonCreateProject($projectName);
+    commonMachineCreate($machineName, $machineDescription);
+    commonWorkHourCreate($workhourName, $workhourPrice);
+}
+
+function workReportLinesDeleteRequiredElements(){
+    commonMachineDelete($machineName);
+    commonWorkHourDelete($workhourName);
+    commonDeleteProject($projectName);
+    commonWorkReportModelDelete($workReportModelName);
+    commonWorkReportModelDelete($workReportModelName2);
+}
+
+function DeleteRequiredElements(){
+    commonWorkReportModelDelete($modelName);
+}
+
+/*
+ * Validations
+ */
+
+function workReportAcctionValidation($action){
+    _assertExists(_span("Timesheet "+$action));
+    _assert(_isVisible(_span("Timesheet "+$action)));
+}
+
+function workReportHeadingCodeValidation(){
+    _assertExists(_div("cannot be empty"));
+    _assert(_isVisible(_div("cannot be empty")));
+}
+
+function workReportResourceValidation(){
+    _assertExists(_div("cannot be empty"));
+    _assert(_isVisible(_div("cannot be empty")));
+}
+
+function workReportTaskValidation(){
+    _assertExists(_div("cannot be empty"));
+    _assert(_isVisible(_div("cannot be empty")));
+}
+
+function workReportHourValidation(){
+    _assertExists(_div("Effort must be greater than zero"));
+    _assert(_isVisible(_div("Effort must be greater than zero")));
+}
+
+/* test values */
+var $workReportModelName = "line";
+var $workReportModelName2 = "heading";
+var $workReportNewName = "newSon";
+var $workReportNewName2 = "newSon";
+var $workhourName = "hourForWorkReport";
+var $workhourPrice = 12;
+var $machineName = "machineForWorkReport";
+var $machineDescription = "forWorkReport";
+var $projectName = "projectForWorkReport";
+
+commonLogin("admin", "admin");
+
+workReportCreateLineModel($workReportModelName);
+workReportCreateHeadingModel($workReportModelName2);
+workReportEdit($workReportModelName);
+commonWorkReportDelete($workReportModelName);
+workReportLinesDeleteRequiredElements();
+
+commonLogout();

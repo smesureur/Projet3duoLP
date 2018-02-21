@@ -1,0 +1,86 @@
+Functional Tests
+================
+
+.. sectnum::
+
+:Author: Pablo Fernández de la Cigoña Nóvoa
+:Contact: pcigonha@igalia.com
+:Date: 08/08/2011
+:Copyright:
+  Some rights reserved. This document is distributed under the Creative
+  Commons Attribution-ShareAlike 3.0 licence, available in
+  http://creativecommons.org/licenses/by-sa/3.0/.
+:Abstract:
+  Basic documentation about LibrePlan functional tests usage.
+
+
+.. contents:: Table of Contents
+
+
+Introduction
+------------
+
+Inside ``scripts/functional-tests/`` folder of LibrePlan source code, you can find
+a set of functional tests. They consist of different files and each file groups tests
+related to the same functionality.
+
+Each file is called ``<menu-option>_test.sah`` and represent all the tests developed
+for an individual option of the menu. Additionally, there are a set of fixed tests
+that are always included.
+
+* Create ``<menu-option>``
+* Create ``<menu-option>`` with duplicate type (it should not be allowed)
+* Create ``<menu-option>`` with empty type (it should not be allowed)
+* Create ``<menu-option>`` with duplicate name (it should not be allowed)
+* Edit ``<menu-option>``
+* Delete ``<menu-option>``
+
+
+Requirements
+------------
+
+To run these tests it's necessary to have installed `Sahi <http://sahi.co.in/>`_.
+
+You can download it at:
+http://sourceforge.net/projects/sahi/files/sahi-v35/20110719/install_sahi_v35_20110719.jar/download
+
+To install it, execute the following command where you have the previously download file::
+
+    $ java -jar install_sahi_v35_20110719.jar
+
+You can also see the instructions in sahi's page at:
+http://sahi.co.in/w/using-sahi
+
+
+Run the Scripts
+---------------
+
+.. WARNING::
+
+    All tests use English as default language. So, if
+    your browser language is different from this, they will NOT PASS
+
+Once installed the program you have two ways to execute the tests:
+
+* With a Graphical User Interface (GUI): Follow the instructions at: http://sahi.co.in/w/using-sahi
+
+* On the console:
+
+  * To run sahi scripts, you need to start Sahi::
+
+    $ start_sahi.sh
+
+  * And inside ``scripts/functional-tests/`` you can run them with::
+
+    $ testrunner.sh yourtest.sah <initial-url> <browser>
+
+.. WARNING::
+
+    If you modify Sahi default installation path (``~/sahi/``), you must
+    change the path in ``scripts/functional-tests/sahi-common-env.sh``
+
+It's possible to run more than one script at the same time using a <file.suite>. You
+can see some information in:
+http://sahi.co.in/w/Running+multiple+tests+in+batch+mode
+
+See more information about how to run at: http://sahi.co.in/w/using-sahi
