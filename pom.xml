@@ -964,11 +964,12 @@
                 <version>2.10</version>
                 <configuration>
                    <runOrder>alphabetical</runOrder>
+				   <excludes>
 				   <exclude>**/ws</exclude>
 				   <exclude>**/ws.*.java</exclude>
 				   <exclude>**/ws/*.java</exclude>
-				   <exclude>**/orders/daos/*.java</exclude>
-				   <exclude>**/orders.daos.*.java</exclude>
+				   <exclude>**/OrderDAOTest.java</exclude>
+				   </excludes>
                 </configuration>
             </plugin>
 
