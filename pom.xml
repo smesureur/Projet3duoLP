@@ -961,6 +961,7 @@
 			<plugin>
               <groupId>org.jacoco</groupId>
               <artifactId>jacoco-maven-plugin</artifactId>
+			  <version>0.8.0</version>
               <configuration>
 				<destfile>C:/FORMATION/workspaceLP/workspace/LibrePlan/LibrePlanGlobal/libreplan-webapp/target/jacoco.exec</destfile>
 				<datafile>C:/FORMATION/workspaceLP/workspace/LibrePlan/LibrePlanGlobal/libreplan-webapp/target/jacoco.exec</datafile>
