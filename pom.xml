@@ -971,6 +971,7 @@
 				   <exclude>**/OrderDAOTest.java</exclude>
 				   <exclude>**/AddAdvanceAssignmentsToOrderElementTest.java</exclude>
 				   <exclude>**/CostCategoryServiceTest.java</exclude>
+				   <exclude>**/WorkReportServiceTest.test</exclude>
 				   </excludes>
                 </configuration>
             </plugin>
