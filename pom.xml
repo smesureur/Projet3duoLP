@@ -964,6 +964,7 @@
                 <version>2.10</version>
                 <configuration>
                    <runOrder>alphabetical</runOrder>
+				   <exclude>**/ws</exclude>
                 </configuration>
             </plugin>
 
