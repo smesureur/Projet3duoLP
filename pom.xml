@@ -969,6 +969,7 @@
 				   <exclude>**/ws.*.java</exclude>
 				   <exclude>**/ws/*.java</exclude>
 				   <exclude>**/OrderDAOTest.java</exclude>
+				   <exclude>**/AddAdvanceAssignmentsToOrderElementTest.java</exclude>
 				   </excludes>
                 </configuration>
             </plugin>
