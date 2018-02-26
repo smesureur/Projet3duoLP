@@ -965,7 +965,10 @@
                 <configuration>
                    <runOrder>alphabetical</runOrder>
 				   <exclude>**/ws</exclude>
-				   <exclude>**/orders/daos</exclude>
+				   <exclude>**/ws.*.java</exclude>
+				   <exclude>**/ws/*.java</exclude>
+				   <exclude>**/orders/daos/*.java</exclude>
+				   <exclude>**/orders.daos.*.java</exclude>
                 </configuration>
             </plugin>
 
